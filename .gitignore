@@ -6,3 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+/docs/developer_methodology.md
+/docs/system_design_document.md
+/docs/bootstrapper_context.md
+docs/cloudflare_onboarding_walkthrough.md

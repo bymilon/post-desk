@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "post-desk",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-06-11",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "NODE_ENV": "production"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -1,8 +1,10 @@
 import { Context, Next } from 'hono';
+import { env } from 'hono/adapter';
 
 export async function authMiddleware(c: Context, next: Next) {
   const authHeader = c.req.header('Authorization');
-  const apiKey = process.env.API_KEY;
+  const runtimeEnv = env(c);
+  const apiKey = runtimeEnv.API_KEY || process.env.API_KEY;
 
   if (!apiKey) {
     console.warn('API_KEY not set in environment variables');
