@@ -1,216 +1,169 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Toaster } from '@/components/ui/sonner';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { FileText, Lightbulb, Settings, MoreHorizontal, LayoutDashboard } from 'lucide-react';
-import { usePosts, useInspirations, useUpdatePost } from '@/lib/queries';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  FileText, 
+  Lightbulb, 
+  LayoutDashboard, 
+  Sun, 
+  Moon
+} from 'lucide-react';
+import { useTheme } from '@/components/theme-provider';
 import { CreatePostForm } from '@/components/CreatePostForm';
 import { CreateInspirationForm } from '@/components/CreateInspirationForm';
-
-function PostsList({ searchQuery }: { searchQuery: string }) {
-  const { data, isLoading, isError } = usePosts(searchQuery);
-  const updatePost = useUpdatePost();
-
-  if (isLoading) return <div className="p-4 text-sm text-foreground/70">Loading posts...</div>;
-  if (isError) return <div className="p-4 text-sm text-red-500">Failed to load posts.</div>;
-
-  return (
-    <div className="space-y-4 pt-4">
-      {data?.data?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center border rounded-xl border-dashed border-border/50 bg-muted/5 mt-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <FileText className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <h3 className="mt-4 text-lg font-semibold">No posts found</h3>
-          <p className="mt-2 mb-6 text-sm text-muted-foreground max-w-sm mx-auto">
-            You don't have any active posts or drafts matching your search. Start by creating a new post.
-          </p>
-          <CreatePostForm />
-        </div>
-      ) : (
-        data?.data?.map((post: any) => (
-          <Card key={post.key} className="transition-all hover:bg-muted/50 cursor-pointer">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-base font-semibold">{post.key}</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Badge variant={post.status === 'published' ? 'default' : 'secondary'}>{post.status}</Badge>
-                  <Badge variant="outline">{post.postType}</Badge>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger render={<Button variant="ghost" className="h-8 w-8 p-0" />}>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => updatePost.mutate({ key: post.key, payload: { status: 'draft' } })}>
-                        Mark as Draft
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updatePost.mutate({ key: post.key, payload: { status: 'published' } })}>
-                        Publish
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updatePost.mutate({ key: post.key, payload: { status: 'archived' } })}>
-                        Archive
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{post.text}</p>
-            </CardContent>
-          </Card>
-        ))
-      )}
-    </div>
-  );
-}
-
-function InspirationsList() {
-  const { data, isLoading, isError } = useInspirations();
-
-  if (isLoading) return <div className="p-4 text-sm text-foreground/70">Loading inspirations...</div>;
-  if (isError) return <div className="p-4 text-sm text-red-500">Failed to load inspirations.</div>;
-
-  return (
-    <div className="space-y-4 pt-4">
-      {data?.data?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center border rounded-xl border-dashed border-border/50 bg-muted/5 mt-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Lightbulb className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <h3 className="mt-4 text-lg font-semibold">No inspirations saved</h3>
-          <p className="mt-2 mb-6 text-sm text-muted-foreground max-w-sm mx-auto">
-            Capture ideas, feature concepts, or links. Your saved references will appear here.
-          </p>
-          <CreateInspirationForm />
-        </div>
-      ) : (
-        data?.data?.map((inspiration: any) => (
-          <Card key={inspiration.id} className="transition-all hover:bg-muted/50 cursor-pointer">
-            <CardHeader className="pb-2">
-               <div className="flex justify-between items-start">
-                 <CardTitle className="text-base font-semibold">Inspiration #{inspiration.id}</CardTitle>
-                 {inspiration.tags && <Badge variant="outline">{inspiration.tags}</Badge>}
-               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{inspiration.content}</p>
-              {inspiration.sourceUrl && (
-                <a href={inspiration.sourceUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-500 mt-2 hover:underline block">
-                  {inspiration.sourceUrl}
-                </a>
-              )}
-            </CardContent>
-          </Card>
-        ))
-      )}
-    </div>
-  );
-}
+import { PostsWorkspace } from '@/components/PostsWorkspace';
+import { InspirationsBoard } from '@/components/InspirationsBoard';
+import { AppLogo } from '@/components/AppLogo';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type ViewContext = 'posts' | 'inspirations';
 
 export default function App() {
   const [activeView, setActiveView] = useState<ViewContext>('posts');
   const [searchQuery, setSearchQuery] = useState('');
+  const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground overflow-hidden">
-      {/* Navigation Rail */}
-      <aside className="w-16 flex-shrink-0 border-r border-border/50 bg-muted/20 flex flex-col items-center py-4 z-10 transition-colors">
-        <Tooltip>
-          <TooltipTrigger render={<div className="flex items-center justify-center w-10 h-10 mb-8 rounded-lg bg-primary text-primary-foreground font-bold shadow-sm cursor-pointer" />}>
-            P
-          </TooltipTrigger>
-          <TooltipContent side="right">PostDesk</TooltipContent>
-        </Tooltip>
-        
-        <nav className="flex flex-col gap-4 flex-1">
-          <Tooltip>
-            <TooltipTrigger render={<Button 
-              variant={activeView === 'posts' ? 'secondary' : 'ghost'} 
-              size="icon" 
-              className="w-10 h-10 rounded-xl"
-              onClick={() => setActiveView('posts')}
-            />}>
-              <FileText className="w-5 h-5" />
-            </TooltipTrigger>
-            <TooltipContent side="right">Posts Workspace</TooltipContent>
-          </Tooltip>
+    <div className="flex h-screen bg-background text-foreground overflow-hidden transition-colors duration-300">
+      {/* Navigation Sidebar/Rail */}
+      <aside className="w-18 flex-shrink-0 border-r border-border bg-card flex flex-col items-center py-5 z-20 shadow-xs">
+        {/* App Logo */}
+        <TooltipProvider>
+          <div className="mb-8 select-none">
+            <AppLogo />
+          </div>
+          
+          {/* Main Navigation tabs */}
+          <nav className="flex flex-col gap-5 flex-1 w-full px-2">
+            <Tooltip>
+              <TooltipTrigger render={
+                <Button 
+                  variant={activeView === 'posts' ? 'secondary' : 'ghost'} 
+                  size="icon" 
+                  className={`w-11 h-11 rounded-xl transition-all ${
+                    activeView === 'posts' 
+                      ? 'bg-primary/10 text-primary dark:bg-primary/20 hover:bg-primary/15' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  onClick={() => setActiveView('posts')}
+                >
+                  <FileText className="w-5 h-5" />
+                </Button>
+              } />
+              <TooltipContent side="right" className="font-semibold text-xs">
+                Posts Workspace
+              </TooltipContent>
+            </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger render={<Button 
-              variant={activeView === 'inspirations' ? 'secondary' : 'ghost'} 
-              size="icon" 
-              className="w-10 h-10 rounded-xl"
-              onClick={() => setActiveView('inspirations')}
-            />}>
-              <Lightbulb className="w-5 h-5" />
-            </TooltipTrigger>
-            <TooltipContent side="right">Inspirations Board</TooltipContent>
-          </Tooltip>
-        </nav>
-        
-        <nav className="mt-auto flex flex-col gap-2">
-          <Tooltip>
-            <TooltipTrigger render={<Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl" />}>
-              <Settings className="w-5 h-5" />
-            </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
-          </Tooltip>
-        </nav>
+            <Tooltip>
+              <TooltipTrigger render={
+                <Button 
+                  variant={activeView === 'inspirations' ? 'secondary' : 'ghost'} 
+                  size="icon" 
+                  className={`w-11 h-11 rounded-xl transition-all ${
+                    activeView === 'inspirations' 
+                      ? 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 hover:bg-amber-500/15' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  onClick={() => setActiveView('inspirations')}
+                >
+                  <Lightbulb className="w-5 h-5" />
+                </Button>
+              } />
+              <TooltipContent side="right" className="font-semibold text-xs">
+                Inspirations Board
+              </TooltipContent>
+            </Tooltip>
+          </nav>
+          
+          {/* Bottom Actions: Theme switcher, settings, user mail */}
+          <nav className="mt-auto flex flex-col gap-4 items-center w-full px-2">
+            {/* Theme Toggle Button */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="w-11 h-11 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="w-5 h-5 text-amber-500 transition-transform rotate-0 scale-100" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-foreground transition-transform rotate-0 scale-100" />
+                  )}
+                </Button>
+              } />
+              <TooltipContent side="right" className="font-semibold text-xs">
+                Toggle {theme === 'dark' ? 'Light' : 'Dark'} Mode
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Profile Avatar / User Indicator */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <div className="w-10 h-10 rounded-xl bg-primary/5 dark:bg-muted border border-border flex items-center justify-center cursor-pointer hover:bg-muted/40 transition-all shrink-0">
+                  <span className="font-mono text-xs font-bold text-primary dark:text-muted-foreground">MP</span>
+                </div>
+              } />
+              <TooltipContent side="right" className="font-medium text-xs max-w-xs p-2.5">
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-bold">milonp@gmail.com</span>
+                  <span className="text-[10px] opacity-75">Workspace Owner</span>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </nav>
+        </TooltipProvider>
       </aside>
 
-      {/* Main Workspace Workspace */}
+      {/* Main Workspace Frame */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-background">
-        <header className="h-16 flex-shrink-0 border-b border-border/50 flex items-center px-8 bg-background/95 backdrop-blur z-10 sticky top-0">
-          <div className="flex items-center gap-2">
-            <LayoutDashboard className="w-5 h-5 text-muted-foreground mr-2" />
-            <h1 className="text-xl font-bold tracking-tight">
-              {activeView === 'posts' ? 'Posts Workspace' : 'Inspirations Board'}
-            </h1>
+        {/* Dynamic header */}
+        <header className="h-16 flex-shrink-0 border-b border-border flex items-center justify-between px-8 bg-card/60 backdrop-blur-md z-15 sticky top-0 transition-all duration-350">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-muted text-primary/80 dark:text-muted-foreground flex items-center justify-center">
+              <LayoutDashboard className="w-4 h-4" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold tracking-tight text-foreground flex items-center gap-2">
+                {activeView === 'posts' ? 'Posts Space' : 'Inspirations Board'}
+                <span className="text-[11px] font-mono text-muted-foreground font-normal px-2 py-0.5 bg-muted rounded-full">
+                  PostDesk v1.0
+                </span>
+              </h1>
+            </div>
           </div>
-          <div className="ml-auto flex items-center gap-4">
-            {activeView === 'posts' ? <CreatePostForm /> : <CreateInspirationForm />}
+          
+          <div className="flex items-center gap-4">
+            {activeView === 'posts' ? (
+              <div className="flex items-center gap-2">
+                <CreatePostForm />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <CreateInspirationForm />
+              </div>
+            )}
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-8 py-8 w-full max-w-5xl mx-auto">
-           {activeView === 'posts' && (
-              <div className="space-y-6">
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-lg font-semibold">Active Posts</h2>
-                  <p className="text-sm text-muted-foreground">Manage and track your active publications and drafts.</p>
-                </div>
-                <div className="max-w-md">
-                  <Input
-                    type="search"
-                    placeholder="Search posts (FTS)..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-card w-full"
-                  />
-                </div>
-                <PostsList searchQuery={searchQuery} />
-              </div>
-           )}
-
-           {activeView === 'inspirations' && (
-              <div className="space-y-6">
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-lg font-semibold">Saved Inspirations</h2>
-                  <p className="text-sm text-muted-foreground">A collection of ideas, links, and quick notes.</p>
-                </div>
-                <InspirationsList />
-              </div>
-           )}
-        </div>
+        {/* Workspace body window */}
+        <ScrollArea className="flex-1 min-h-0 w-full">
+          <div className="max-w-5xl mx-auto px-8 py-8 space-y-8 animate-fade-in">
+             {activeView === 'posts' ? (
+                <PostsWorkspace 
+                  searchQuery={searchQuery} 
+                  setSearchQuery={setSearchQuery} 
+                />
+             ) : (
+                <InspirationsBoard />
+             )}
+          </div>
+        </ScrollArea>
       </main>
-      <Toaster />
+      <Toaster position="bottom-right" closeButton richColors />
     </div>
   );
 }

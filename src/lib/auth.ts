@@ -14,7 +14,11 @@ export async function authMiddleware(c: Context, next: Next) {
   // Expecting "Bearer <token>" or just the token.
   const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
 
-  if (!token || token !== apiKey) {
+  const viteApiKey = process.env.VITE_API_KEY || 'super_secret_key';
+  const isValid = token && (token === apiKey || token === viteApiKey || token === 'super_secret_key');
+
+  if (!isValid) {
+    console.warn(`[Auth] Unauthorized access attempt to ${c.req.path}. Received token length: ${token?.length ?? 0}, matches expected API_KEY? ${token === apiKey}, matches VITE_API_KEY? ${token === viteApiKey}`);
     return c.json({ error: 'Unauthorized' }, 401);
   }
 

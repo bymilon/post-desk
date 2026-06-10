@@ -1,4 +1,6 @@
+import 'dotenv/config';
 import { Hono } from 'hono';
+import { logger } from 'hono/logger';
 import { getRequestListener } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { createServer } from 'http';
@@ -10,6 +12,9 @@ import { authMiddleware } from '@/lib/auth';
 
 async function startServer() {
   const app = new Hono();
+
+  // Log all requests
+  app.use('*', logger());
 
   // API Routes
   app.get('/api/health', (c) => c.json({ status: 'ok' }));
