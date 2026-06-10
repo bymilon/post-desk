@@ -6,12 +6,15 @@
 [![Hono](https://img.shields.io/badge/Hono-v4-e05138.svg)](https://hono.dev/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-v0.45-c5f347.svg)](https://orm.drizzle.team/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6.svg)](https://www.typescriptlang.org/)
+[![X Follow](https://img.shields.io/badge/Follow-%40milonspace-black.svg?style=flat&logo=x)](https://x.com/milonspace)
 
 PostDesk is a production-grade, full-stack content operating system and growth cockpit for X (Twitter) creators, developer advocates, and teams. Built with a developer-first mindset, it leverages **Vertical Slice Architecture (VSA)** and **CQRS boundaries** to manage, refine, and discover content ideas without friction.
 
+Developed and maintained by **Milon Biswas** ([@milonspace on X](https://x.com/milonspace)).
+
 ---
 
-## ⚡ Tech Stack & Key Choices
+## Tech Stack & Key Choices
 
 PostDesk uses a lightweight, safe, and highly performant full-stack model:
 
@@ -24,7 +27,7 @@ PostDesk uses a lightweight, safe, and highly performant full-stack model:
 
 ---
 
-## 🏗️ Architectural Blueprint
+## Architectural Blueprint
 
 ### 1. Vertical Slice Architecture (VSA)
 Rather than organizing files in traditional horizontal layers (controllers, services, and queries), PostDesk organizes code into isolated **features**. Each slice encapsulates all layout, endpoint, business logic, validation, and database operations needed to satisfy a feature:
@@ -52,7 +55,7 @@ All domain-level entries require validation via `v.safeParse`. Validation result
 
 ---
 
-## 📦 Database Schema Specification
+## Database Schema Specification
 
 ### Write Models (OLTP)
 
@@ -77,7 +80,7 @@ A swipe-file repository for brainstorming, capturing hooks, and bookmarking exte
 
 ---
 
-## 🎛️ Monadic Error Taxonomy
+## Monadic Error Taxonomy
 
 Every backend routing handler and parsing step guards against raw stack traces. Instead of raising uncaught exceptions, operations return a safe `Result<T, AppError>` union:
 
@@ -88,7 +91,7 @@ Every backend routing handler and parsing step guards against raw stack traces. 
 
 ---
 
-## 🤖 AI-Native Development & DX (Google AI Studio)
+## AI-Native Development & DX (Google AI Studio)
 
 PostDesk is developed and validated within **Google AI Studio**, leveraging its cloud developer sandbox and advanced **AI Coding Agent** as the primary automation engine. The codebase is architected with a strict discipline that optimizes both human understanding and agentic reasoning:
 
@@ -99,7 +102,16 @@ PostDesk is developed and validated within **Google AI Studio**, leveraging its 
 
 ---
 
-## 🚀 Quick Start & Scripts
+## Support & Sponsorship
+
+If you find PostDesk valuable for organizing your X growth workflow, consider sponsoring the development directly:
+
+- **Follow / DM on X**: Get in touch at [@milonspace](https://x.com/milonspace) for updates, custom builds, and systems engineering.
+- **Sponsor / Support**: Support open-source tool development by starring this repository and reaching out for sponsorship opportunities in creator infrastructure.
+
+---
+
+## Quick Start & Scripts
 
 ### Prerequisites
 - **Node.js**: `v18.x` or higher
@@ -132,6 +144,6 @@ PostDesk is developed and validated within **Google AI Studio**, leveraging its 
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
