@@ -1,0 +1,22 @@
+import { Context, Next } from 'hono';
+
+export async function authMiddleware(c: Context, next: Next) {
+  const authHeader = c.req.header('Authorization');
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.warn('API_KEY not set in environment variables');
+    // Technically might want to block or allow, but for production it should be blocked.
+    // However, if not set we'll assume unsecured or throw an error. Let's return 500 block.
+    return c.json({ error: 'Server configuration error' }, 500);
+  }
+
+  // Expecting "Bearer <token>" or just the token.
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+
+  if (!token || token !== apiKey) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  await next();
+}
