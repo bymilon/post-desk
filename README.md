@@ -1,135 +1,573 @@
-# PostDesk
+# Post Desk
 
-A production-grade, full-stack content engine and workspace for X (Twitter) growth. Built with an elite developer-centric architecture using a unified **Vertical Slice Architecture (VSA)** and matching **CQRS boundaries**, designed to run on high-performance local SQLite / LibSQL instances with instant text filtering via **FTS5 / BM25**.
+<div align="center">
 
----
+### Production-Grade Content Operating System for X (Twitter)
 
-## ⚡ Tech Stack & Key Choices
+Searchable content vault, inspiration engine, and publishing workflow built with Vertical Slice Architecture (VSA), CQRS, Hono, Astro, Svelte 5, Turso, Drizzle ORM, and SQLite FTS5.
 
-PostDesk rejects bloated patterns in favor of type-safe, ultra-fast, and modular tools:
-
-*   **Runtime & Server**: Node.js + [Express](https://expressjs.com/) with development proxying via [Vite](https://vite.dev/).
-*   **Database & ORM**: SQLite ([LibSQL / Turso](https://turso.tech/)) with [Drizzle ORM](https://orm.drizzle.team/) for strict compile-time types.
-*   **Search Engine**: SQLite **FTS5 (BM25 relevance ranking)** for instant offline-first semantic search.
-*   **Validation**: [Valibot](https://valibot.dev/) for lightweight, tree-shakable runtime schema enforcement.
-*   **Monadic Error Handling**: Type-safe control flow using the `Result<T, AppError>` Monad pattern from `ts-results-es`. No silent throws.
-*   **UI Foundation**: React 19, Tailwind CSS v4, Radix Base UI primitives, and custom micro-interactions.
+Designed for founders, developer advocates, creators, indie hackers, growth operators, and AI-assisted content teams.
 
 ---
 
-## 🏗️ Architectural Foundations
+**Edge Native · Search First · AI Friendly · Production Ready**
 
-### 1. Vertical Slice Architecture (VSA)
-Instead of dividing code into traditional horizontal layers (controllers, services, models), PostDesk divides code by **features**. Every slice is completely self-contained, encapsulating its own request handling, validation schemas, business logic, and custom database queries:
+</div>
+
+---
+
+## Why Post Desk?
+
+Most social media tools are publishing tools.
+
+Post Desk is a **content intelligence system**.
+
+It helps you:
+
+- Capture ideas before they disappear
+- Build a long-term searchable content archive
+- Store inspiration from creators and industry leaders
+- Discover old content instantly using BM25-powered search
+- Organize drafts, threads, bookmarks, and published posts
+- Create a reusable content knowledge base
+
+The goal is simple:
+
+> Turn every post into a permanent, searchable asset.
+
+---
+
+## Who Is This For?
+
+### Developer Advocates
+
+Maintain technical content libraries and campaign history.
+
+### Founders
+
+Build audience-driven content systems without losing ideas.
+
+### Indie Hackers
+
+Create, organize, and reuse content efficiently.
+
+### Growth Operators
+
+Manage large content inventories with search-first workflows.
+
+### AI Agent Builders
+
+Provide structured content repositories for autonomous content generation systems.
+
+---
+
+# Core Features
+
+## Content Management
+
+Manage the complete lifecycle of X content.
+
+- Draft posts
+- Publish content
+- Archive posts
+- Bookmark posts
+- Pin important content
+- Track content usage
+- Support standard posts
+- Support thread workflows
+
+---
+
+## Inspiration Engine
+
+Capture and organize content inspiration.
+
+- Save reference posts
+- Store creator insights
+- Capture source URLs
+- Organize with tags
+- Build reusable idea libraries
+
+---
+
+## Full-Text Search
+
+Powered by SQLite FTS5 and BM25 ranking.
+
+Capabilities:
+
+- Full-text search
+- Relevance ranking
+- Content discovery
+- Historical retrieval
+- Semantic-style lookup
+- High-performance indexing
+
+---
+
+## Content Knowledge Base
+
+Post Desk gradually becomes your personal content database.
+
+Search:
+
+- Launch announcements
+- Technical explanations
+- Product updates
+- Growth experiments
+- Marketing campaigns
+- Historical ideas
+
+---
+
+# Architecture
+
+Post Desk follows modern enterprise architecture patterns optimized for maintainability, scalability, and AI-assisted development.
+
+---
+
+## Vertical Slice Architecture (VSA)
+
+Every feature is isolated and owns:
+
+- Routing
+- Validation
+- Business logic
+- Data access
+- Domain contracts
 
 ```text
 src/
-├── features/
-│   ├── [feature-name]/
-│   │   ├── index.ts      # Slice entry router (mounted directly to Express/Hono)
-│   │   ├── schema.ts     # Feature-specific Valibot validation rules
-│   │   ├── handler.ts    # Main business logic orchestrator
-│   │   └── db.ts         # Targeted database access specialized for the feature
+└── features/
+    ├── create-post/
+    ├── update-post-status/
+    ├── search-posts/
+    └── inspiration/
 ```
 
-### 2. CQRS (Command Query Responsibility Segregation)
-Read and write paths are physically segregated to guarantee zero side effects and optimal index usage:
-*   **Commands (Write)**: Pure state mutation. Executes on standard transactional tables (`x_posts`, `inspiration_posts`). Does not return complex, nested JSON objects.
-*   **Queries (Read)**: Streamlined read access. Interacts heavily with the FTS5 virtual index to construct ultra-fast keyword searches using native match matrices.
+Benefits:
 
-### 3. Parse, Don't Validate
-Valibot schemas parse incoming data at boundaries. Exceptions are strictly forbidden; validation uses `v.safeParse` returning a `SafeParseResult`. Failures are converted into type-safe domain errors (`ValidationError`) at the boundary.
+- Independent feature ownership
+- Reduced coupling
+- Faster onboarding
+- Easier AI-assisted development
+- Safer refactoring
 
 ---
 
-## 📦 Database Schema Spec
+## Command Query Responsibility Segregation (CQRS)
 
-### Write Models (OLTP)
+Commands and Queries are separated by design.
 
-#### `x_posts`
-Holds active post blueprints, schedule properties, and status.
-*   `id` (integer, Primary Key)
-*   `key` (text, Unique Custom Base31)
-*   `content` (text)
-*   `status` (`'draft'`, `'published'`, `'archived'`, `'bookmarked'`, `'pinned'`)
-*   `post_type` (`'standard'`, `'thread'`)
-*   `used` (integer, boolean flag)
-*   `created_at` / `updated_at` (integer, Unix epoch)
+### Commands
 
-#### `inspiration_posts`
-Brains and inspiration capture bank for future hook ideation.
-*   `id` (integer, Primary Key)
-*   `key` (text, Unique Custom Base31)
-*   `source_url` (text, nullable)
-*   `content` (text)
-*   `author_handle` (text, nullable)
-*   `tags` (text, CSV representation)
+Responsible for state changes.
 
-### Read Models (OLAP FTS)
+Examples:
 
-#### `x_posts_fts` (Virtual Table)
-SQLite FTS5 full-text index bound to the content fields of `x_posts` with custom tokenizer configurations for high relevancy search scoring.
+- Create Post
+- Update Status
+- Archive Post
+- Capture Inspiration
 
----
+### Queries
 
-## 🚀 Getting Started
+Responsible for data retrieval.
 
-### Prerequisites
-*   Node.js (`v18.x` or higher)
-*   npm or pnpm
+Examples:
 
-### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up your environment configuration (see `.env.example` context):
-   ```bash
-   cp .env.example .env
-   ```
-4. Setup and seed the local database schema:
-   ```bash
-   npm run db:setup
-   ```
+- Search Posts
+- Filter Posts
+- Retrieve Inspiration
+- Discover Content
 
-### Running Locally
-To launch both the full-stack backend server and compile the client assets in watch mode:
-```bash
-npm run dev
-```
-The server will bind and be accessible at `http://localhost:3000`.
+Benefits:
 
-### Production Build
-Aligns with high-efficiency container packaging. Compiles client static assets to `/dist` and bundles the monolithic back-end server via `esbuild`:
-```bash
-npm run build
-npm start
-```
+- Cleaner boundaries
+- Faster search systems
+- Better scalability
+- Easier optimization
 
 ---
 
-## 🎛️ Monadic Exception Guide
+# Technology Stack
 
-We handle errors cleanly as values, avoiding the unpredictable nature of unstructured try/catch exceptions:
+## Frontend
 
-```typescript
-import { Result, Ok, Err } from 'ts-results-es';
+| Technology | Purpose |
+|------------|----------|
+| Astro | SSR and routing |
+| Svelte 5 | Interactive islands |
+| Tailwind CSS | Styling |
+| DaisyUI | UI components |
 
-async function safeProcess(input: string): Promise<Result<SuccessData, AppError>> {
-  if (!input) {
-    return Err(new ValidationError("Input cannot be empty"));
-  }
-  try {
-    const data = await db.save(input);
-    return Ok(data);
-  } catch (error) {
-    return Err(new DatabaseError(error));
-  }
-}
+---
+
+## Backend
+
+| Technology | Purpose |
+|------------|----------|
+| Hono | Edge API framework |
+| Cloudflare Workers | Deployment runtime |
+
+---
+
+## Data Layer
+
+| Technology | Purpose |
+|------------|----------|
+| Turso | Distributed database |
+| LibSQL | Database protocol |
+| Drizzle ORM | Type-safe ORM |
+| SQLite FTS5 | Search indexing |
+
+---
+
+## Validation
+
+| Technology | Purpose |
+|------------|----------|
+| Valibot | Schema validation |
+
+---
+
+## Error Handling
+
+| Technology | Purpose |
+|------------|----------|
+| ts-results-es | Result-based workflows |
+
+---
+
+# Database Design
+
+## Write Models
+
+### x_posts
+
+Stores content lifecycle state.
+
+```text
+id
+key
+content
+status
+post_type
+used
+created_at
+updated_at
+```
+
+### Supported Statuses
+
+```text
+draft
+published
+archived
+bookmarked
+pinned
+```
+
+### Supported Post Types
+
+```text
+standard
+thread
 ```
 
 ---
 
-## 📜 License
-MIT - Created by Milton (@bymilon).
+### inspiration_posts
+
+Stores inspiration and references.
+
+```text
+id
+key
+source_url
+content
+author_handle
+tags
+created_at
+```
+
+---
+
+## Read Models
+
+### x_posts_fts
+
+SQLite FTS5 virtual table optimized for search.
+
+Indexed fields:
+
+```text
+content
+```
+
+Capabilities:
+
+- BM25 ranking
+- Full-text search
+- Fast retrieval
+- Content discovery
+
+---
+
+# Validation Philosophy
+
+All external boundaries are validated using Valibot.
+
+```ts
+const result = v.safeParse(schema, payload)
+```
+
+### Principles
+
+- Schema-first design
+- Type-safe boundaries
+- No runtime guessing
+- Predictable failures
+- Explicit validation contracts
+
+---
+
+# Error Handling Philosophy
+
+Post Desk does not use exception-driven business logic.
+
+All operations return:
+
+```ts
+Result<T, AppError>
+```
+
+Example:
+
+```ts
+async function executeCreateCommand(
+  payload: CreatePostPayload
+): Promise<Result<PostEntity, AppError>>
+```
+
+---
+
+## Domain Error Taxonomy
+
+```ts
+ValidationError
+DatabaseError
+NotFoundError
+InternalServerError
+```
+
+Benefits:
+
+- Predictable execution paths
+- Safer APIs
+- Better observability
+- Cleaner debugging
+
+---
+
+# API Surface
+
+## Create Post
+
+```http
+POST /api/v1/posts
+```
+
+---
+
+## Update Post Status
+
+```http
+PATCH /api/v1/posts/:id
+```
+
+---
+
+## Search Posts
+
+```http
+GET /api/v1/posts
+```
+
+---
+
+## Capture Inspiration
+
+```http
+POST /api/v1/inspiration
+```
+
+---
+
+# Search Architecture
+
+Post Desk is built around a search-first philosophy.
+
+Unlike traditional CRUD applications, search is a primary workflow.
+
+The platform leverages:
+
+- SQLite FTS5
+- BM25 relevance ranking
+- Indexed read models
+- CQRS query pipelines
+
+Use cases:
+
+- Find old launch posts
+- Retrieve successful content
+- Discover forgotten ideas
+- Reuse proven content angles
+- Search years of content instantly
+
+---
+
+# AI Agent Friendly
+
+Post Desk is intentionally designed for modern AI-assisted engineering workflows.
+
+Characteristics:
+
+- Vertical Slice Architecture
+- Feature ownership
+- Explicit schemas
+- Deterministic boundaries
+- Result-based error handling
+- Search-first data access
+
+This makes the codebase significantly easier for:
+
+- ChatGPT
+- Claude
+- Gemini
+- Cursor
+- Windsurf
+- Cline
+- OpenCode
+- Autonomous coding agents
+
+to understand, modify, and extend safely.
+
+---
+
+# Generative Engine Optimization (GEO)
+
+Post Desk is structured to maximize discoverability and understanding by large language models and AI search systems.
+
+Relevant concepts:
+
+- Generative Engine Optimization (GEO)
+- Large Language Model Optimization (LLMO)
+- AI Search Optimization
+- Retrieval-Augmented Generation (RAG)
+- Semantic Content Search
+- Knowledge Base Management
+- Content Operations Platform
+- Creator Infrastructure
+- Content Intelligence System
+
+This repository intentionally documents architectural decisions, system boundaries, and domain concepts in a machine-readable format to improve AI comprehension and retrieval quality.
+
+---
+
+# Development Roadmap
+
+## Phase 1
+
+Foundation
+
+- Hono bootstrap
+- Environment configuration
+- Result primitives
+- Error taxonomy
+
+## Phase 2
+
+Database
+
+- Drizzle ORM
+- Turso integration
+- Core schema deployment
+
+## Phase 3
+
+Search Infrastructure
+
+- FTS5
+- BM25
+- Query optimization
+
+## Phase 4
+
+Content Commands
+
+- Create Post
+- Update Status
+- Usage Tracking
+
+## Phase 5
+
+Content Queries
+
+- Search Engine
+- Filters
+- Ranking
+
+## Phase 6
+
+Inspiration Engine
+
+- Capture workflows
+- Retrieval workflows
+- Tagging system
+
+---
+
+# Engineering Standards
+
+### Required
+
+- Vertical Slice Architecture
+- CQRS
+- Valibot
+- Drizzle ORM
+- Result-based error handling
+- SQLite FTS5
+- Type-safe boundaries
+
+### Forbidden
+
+- Fat controllers
+- Shared service layers
+- Exception-driven business logic
+- Hidden side effects
+- Runtime schema guessing
+
+---
+
+# Keywords
+
+Post Desk, X Content Management, Twitter Content Management, Content Operating System, Content Intelligence Platform, Content Knowledge Base, Inspiration Management, SQLite FTS5, BM25 Search, Vertical Slice Architecture, CQRS, Hono Framework, Astro Framework, Svelte 5, Turso Database, LibSQL, Drizzle ORM, Valibot, AI Content Infrastructure, Developer Advocacy Tools, Creator Tools, Content Search Engine, Growth Marketing Infrastructure, Generative Engine Optimization, GEO, LLMO, AI Search Optimization.
+
+---
+
+## License
+
+MIT
+
+---
+
+<div align="center">
+
+Built by **Milon Biswas**
+
+X → https://x.com/milonspace
+
+Building modern AI-native, edge-native, and developer-first software.
+
+</div>
