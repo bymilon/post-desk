@@ -42,21 +42,21 @@ export function CreateInspirationForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button variant="outline" className="font-semibold text-xs h-9 gap-1.5 px-3 rounded-lg shadow-xs hover:bg-muted/40 text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/5">
-          <Plus className="w-4 h-4 text-amber-500" /> Capture Idea
+        <Button variant="outline" className="font-semibold text-xs h-8 gap-1 px-2.5 rounded-md shadow-2xs hover:bg-muted/45 text-amber-600 dark:text-amber-400 border-amber-500/10 bg-amber-500/5">
+          <Plus className="w-3.5 h-3.5 text-amber-500" /> Capture Idea
         </Button>
       } />
-      <DialogContent className="sm:max-w-[480px] p-6 rounded-2xl">
+      <DialogContent className="sm:max-w-[420px] p-5 rounded-lg border border-border/45">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-amber-500" /> Capture Reference Idea
+          <DialogTitle className="text-sm font-bold tracking-tight flex items-center gap-1.5">
+            <Lightbulb className="w-4 h-4 text-amber-500" /> Capture Reference Idea
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4.5 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5 mt-3">
           <div className="space-y-1.5">
-            <Label htmlFor="inspiration-content" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Inspired Content / Text
+            <Label htmlFor="inspiration-content" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-amber-500" /> Inspired Content / Text
             </Label>
             <Textarea
               id="inspiration-content"
@@ -64,14 +64,14 @@ export function CreateInspirationForm() {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Keep copywriting hooks, ideas, format notes, or quote snippets here..."
               rows={4}
-              className="resize-none leading-relaxed text-sm p-3.5 bg-muted/15 border-border rounded-xl focus:ring-1 focus:ring-amber-500 w-full"
+              className="resize-none leading-relaxed text-xs p-3 bg-muted/10 border-border/30 rounded-md focus-visible:ring-1 focus-visible:ring-amber-500/40 w-full"
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="inspiration-sourceUrl" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Link className="w-3.5 h-3.5 text-muted-foreground/80" /> Source URL (optional)
+            <Label htmlFor="inspiration-sourceUrl" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
+              <Link className="w-3 h-3 text-muted-foreground/70" /> Source URL (optional)
             </Label>
             <Input
               id="inspiration-sourceUrl"
@@ -79,32 +79,32 @@ export function CreateInspirationForm() {
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
               placeholder="https://example.com/tweet"
-              className="bg-muted/15 border-border rounded-xl h-9.5 text-sm"
+              className="bg-muted/10 border-border/30 rounded-md h-8 text-xs focus-visible:ring-1 focus-visible:ring-amber-500/40"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="inspiration-tags" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Tag className="w-3.5 h-3.5 text-muted-foreground/80" /> Tags / Keywords (optional)
+            <Label htmlFor="inspiration-tags" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1.5">
+              <Tag className="w-3 h-3 text-muted-foreground/70" /> Tags / Keywords (optional)
             </Label>
             <Input
               id="inspiration-tags"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="viral, hooks, framework"
-              className="bg-muted/15 border-border rounded-xl h-9.5 text-sm"
+              className="bg-muted/10 border-border/30 rounded-md h-8 text-xs focus-visible:ring-1 focus-visible:ring-amber-500/40"
             />
-            <p className="text-[10px] text-muted-foreground/85 px-1">
+            <p className="text-[9.5px] text-muted-foreground/60 px-1">
               Separate multiples using a comma (e.g. typography, inspiration, x-post)
             </p>
           </div>
 
-          <div className="flex justify-between items-center pt-2 border-t border-border/40 mt-6">
+          <div className="flex justify-between items-center pt-2.5 border-t border-border/20 mt-4">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="text-xs font-semibold h-9 px-3"
+              className="text-xs font-semibold h-8 px-3 rounded-md border-border/40"
               onClick={() => setOpen(false)}
             >
               Cancel
@@ -112,7 +112,7 @@ export function CreateInspirationForm() {
             <Button 
               type="submit" 
               size="sm"
-              className="text-xs font-semibold h-9 px-4 bg-amber-600 hover:bg-amber-700 text-white border-none shadow-xs"
+              className="text-xs font-semibold h-8 px-3.5 bg-amber-600 hover:bg-amber-700 hover:opacity-95 text-white border-none shadow-none rounded-md"
               disabled={createInspiration.isPending}
             >
               {createInspiration.isPending ? 'Saving...' : 'Pin to Board'}

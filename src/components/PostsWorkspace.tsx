@@ -128,24 +128,24 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
   return (
     <div className="space-y-4">
       {/* High-Performance Workspace Control Center */}
-      <div id="workspace-control-hub" className="border border-border/70 bg-card rounded-2xl p-4 md:p-5 shadow-xs transition-all space-y-4">
+      <div id="workspace-control-hub" className="border border-border/45 bg-card/60 backdrop-blur-xs rounded-xl p-4 md:p-5 shadow-none transition-all space-y-4">
         
         {/* Row 1: Header / Search / View toggler */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/25">
           <div className="flex items-center gap-3">
-            <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-1.5 font-sans">
+            <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5 font-sans">
               Workspace Desk
-              <Badge variant="secondary" className="font-mono text-[10.5px] h-4.5 px-1.5 font-bold bg-muted/65 text-muted-foreground border border-border/80">
-                {rawPosts.length} total
+              <Badge variant="secondary" className="font-mono text-[10px] h-4 px-1.5 font-bold bg-muted/50 text-muted-foreground border-0 rounded-sm">
+                {rawPosts.length}
               </Badge>
             </h2>
 
             {/* Live View Mode segment inside the header block */}
-            <div className="flex items-center border border-border/85 rounded-lg bg-muted/40 p-0.5 h-7">
+            <div className="flex items-center border border-border/45 rounded-md bg-muted/35 p-0.5 h-6.5">
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-5.5 w-5.5 rounded-md p-1 transition-all ${viewMode === 'grid' ? 'bg-background text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`h-5 w-5 rounded-xs p-0.5 transition-all ${viewMode === 'grid' ? 'bg-background text-foreground font-semibold shadow-2xs' : 'text-muted-foreground hover:text-foreground'}`}
                 onClick={() => setViewMode('grid')}
                 title="Grid View"
               >
@@ -154,7 +154,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-5.5 w-5.5 rounded-md p-1 transition-all ${viewMode === 'list' ? 'bg-background text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`h-5 w-5 rounded-xs p-0.5 transition-all ${viewMode === 'list' ? 'bg-background text-foreground font-semibold shadow-2xs' : 'text-muted-foreground hover:text-foreground'}`}
                 onClick={() => setViewMode('list')}
                 title="List View"
               >
@@ -164,20 +164,20 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
           </div>
 
           {/* Right aligned Search field */}
-          <div className="w-full sm:w-64">
+          <div className="w-full sm:w-60">
             <div className="relative">
               <Input
                 type="search"
-                placeholder="Search posts..."
+                placeholder="Search desk drafts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-muted/15 w-full text-xs pl-3 pr-8 shadow-none h-8 border-border/60"
+                className="bg-muted/10 w-full text-xs pl-3 pr-8 shadow-none h-7.5 border-border/30 rounded-md focus-visible:ring-1 focus-visible:ring-primary/40"
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-1 top-0.5 h-7 w-7 text-muted-foreground hover:text-foreground"
+                  className="absolute right-0.5 top-0.5 h-6.5 w-6.5 text-muted-foreground hover:text-foreground rounded-md"
                   onClick={() => setSearchQuery('')}
                 >
                   <X className="h-3 w-3" />
@@ -190,7 +190,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
         {/* Row 2: 1-Click Preset Ribbon & Advanced Filters Trigger */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
           {/* Quick Desk Modes Ribbon as High-Density Inline Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1 bg-muted/20 border border-border/30 p-0.5 rounded-lg">
             {/* Pill ALL */}
             <Tooltip>
               <TooltipTrigger render={
@@ -201,17 +201,17 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                     setStatusFilter('all');
                     setTypeFilter('all');
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-colors ${
                     (usedFilter === 'all' && statusFilter === 'all' && typeFilter === 'all')
-                      ? 'bg-primary/10 border-primary/25 text-primary' 
-                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                      ? 'bg-background text-foreground border border-border/30 shadow-2xs font-semibold' 
+                      : 'border border-transparent text-muted-foreground/80 hover:text-foreground'
                   }`}
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>All Postings</span>
-                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>All</span>
+                  <Badge variant="secondary" className="font-mono text-[9px] h-3.5 px-1 bg-muted/40 text-muted-foreground border-0 font-normal">
                     {rawPosts.length}
-                  </span>
+                  </Badge>
                 </button>
               } />
               <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
@@ -229,17 +229,17 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                     setStatusFilter('all');
                     setTypeFilter('all');
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-colors ${
                     (usedFilter === 'unused' && statusFilter === 'all' && typeFilter === 'all')
-                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-600 dark:text-amber-400' 
-                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                      ? 'bg-background text-foreground border border-border/30 shadow-2xs font-semibold' 
+                      : 'border border-transparent text-muted-foreground/80 hover:text-foreground'
                   }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Fresh & Unused</span>
-                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                  <Sparkles className="w-3 h-3 text-amber-500" />
+                  <span>Fresh</span>
+                  <Badge variant="secondary" className="font-mono text-[9px] h-3.5 px-1 bg-muted/40 text-muted-foreground border-0 font-normal">
                     {rawPosts.filter((p: any) => !p.used).length}
-                  </span>
+                  </Badge>
                 </button>
               } />
               <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
@@ -257,17 +257,17 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                     setStatusFilter('pinned');
                     setTypeFilter('all');
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-colors ${
                     (statusFilter === 'pinned' && usedFilter === 'all' && typeFilter === 'all')
-                      ? 'bg-indigo-500/10 border-indigo-500/25 text-indigo-600 dark:text-indigo-400' 
-                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                      ? 'bg-background text-foreground border border-border/30 shadow-2xs font-semibold' 
+                      : 'border border-transparent text-muted-foreground/80 hover:text-foreground'
                   }`}
                 >
-                  <Pin className="w-3.5 h-3.5 text-indigo-500" />
-                  <span>Pinned Reference</span>
-                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                  <Pin className="w-3 h-3 text-indigo-500" />
+                  <span>Pinned</span>
+                  <Badge variant="secondary" className="font-mono text-[9px] h-3.5 px-1 bg-muted/40 text-muted-foreground border-0 font-normal">
                     {rawPosts.filter((p: any) => p.status === 'pinned').length}
-                  </span>
+                  </Badge>
                 </button>
               } />
               <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
@@ -285,17 +285,17 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                     setStatusFilter('all');
                     setTypeFilter('thread');
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-colors ${
                     (typeFilter === 'thread' && usedFilter === 'all' && statusFilter === 'all')
-                      ? 'bg-purple-500/10 border-purple-500/25 text-purple-600 dark:text-purple-400' 
-                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                      ? 'bg-background text-foreground border border-border/30 shadow-2xs font-semibold' 
+                      : 'border border-transparent text-muted-foreground/80 hover:text-foreground'
                   }`}
                 >
-                  <Layers className="w-3.5 h-3.5 text-purple-500" />
-                  <span>Threads Desk</span>
-                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                  <Layers className="w-3 h-3 text-purple-500" />
+                  <span>Threads</span>
+                  <Badge variant="secondary" className="font-mono text-[9px] h-3.5 px-1 bg-muted/40 text-muted-foreground border-0 font-normal">
                     {rawPosts.filter((p: any) => p.postType === 'thread').length}
-                  </span>
+                  </Badge>
                 </button>
               } />
               <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
@@ -305,13 +305,13 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
           </div>
 
           {/* Toggle Sliders controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {hasActiveFilters && (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={resetFilters}
-                className="h-8 px-2 text-[11px] font-semibold text-muted-foreground hover:text-foreground hover:bg-muted"
+                className="h-7.5 px-2 text-[10px] font-bold text-muted-foreground hover:text-foreground hover:bg-muted/45 rounded-md"
               >
                 Clear Presets
               </Button>
@@ -321,13 +321,13 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
               variant="outline"
               size="sm"
               onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
-              className={`h-8 px-3 text-xs font-semibold flex items-center gap-1.5 rounded-lg transition-all border ${
+              className={`h-7.5 px-2.5 text-xs font-semibold flex items-center gap-1.5 rounded-md transition-all border ${
                 isFiltersExpanded 
-                  ? 'bg-primary/5 text-primary border-primary/25' 
-                  : 'bg-background hover:bg-muted/80 border-border/80'
+                  ? 'bg-accent/40 text-accent-foreground border-border' 
+                  : 'bg-background hover:bg-muted/40 border-border/45'
               }`}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <SlidersHorizontal className="w-3 h-3 text-muted-foreground" />
               <span>Advanced Filters</span>
             </Button>
           </div>
@@ -412,33 +412,33 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
         </AnimatePresence>
 
         {/* Row 4: Single line streamlined Instadraft tool */}
-        <div className="pt-2 border-t border-border/30">
-          <form onSubmit={handleQuickPostSubmit} className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
+        <div className="pt-2 border-t border-border/20">
+          <form onSubmit={handleQuickPostSubmit} className="flex flex-col md:flex-row items-stretch md:items-center gap-1.5">
             
             {/* Inline Type Selector with high density */}
-            <div className="flex items-center border border-border bg-background rounded-lg p-0.5 h-9.5 shrink-0 md:w-44">
+            <div className="flex items-center border border-border/25 bg-muted/10 rounded-md p-0.5 h-8 shrink-0 md:w-40">
               <button
                 type="button"
                 onClick={() => setQuickPostType('standard')}
-                className={`flex-1 flex items-center justify-center gap-1 h-full text-[11px] font-bold rounded-md transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1 h-full text-[10px] font-bold rounded-sm transition-all ${
                   quickPostType === 'standard' 
-                    ? 'bg-primary/5 text-primary' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-background text-foreground shadow-2xs' 
+                    : 'text-muted-foreground/80 hover:text-foreground'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-3 h-3" />
                 <span>Standard</span>
               </button>
               <button
                 type="button"
                 onClick={() => setQuickPostType('thread')}
-                className={`flex-1 flex items-center justify-center gap-1 h-full text-[11px] font-bold rounded-md transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1 h-full text-[10px] font-bold rounded-sm transition-all ${
                   quickPostType === 'thread' 
-                    ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-background text-foreground shadow-2xs' 
+                    : 'text-muted-foreground/80 hover:text-foreground'
                 }`}
               >
-                <Layers className="w-3.5 h-3.5" />
+                <Layers className="w-3 h-3 text-purple-500" />
                 <span>Thread</span>
               </button>
             </div>
@@ -455,11 +455,11 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                 }
                 value={quickPostText}
                 onChange={(e) => setQuickPostText(e.target.value)}
-                className="bg-muted/15 border-border/75 text-xs h-9.5 pl-3 pr-14 shadow-none focus-visible:ring-1 focus-visible:ring-primary w-full rounded-lg"
+                className="bg-muted/10 border-border/30 text-xs h-8 pl-3 pr-14 shadow-none focus-visible:ring-1 focus-visible:ring-primary/40 w-full rounded-md"
               />
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                <span className={`text-[10px] font-mono font-bold ${
-                  (280 - quickPostText.length) < 0 ? 'text-destructive' : 'text-muted-foreground/50'
+                <span className={`text-[9.5px] font-mono font-bold ${
+                  (280 - quickPostText.length) < 0 ? 'text-destructive animate-pulse' : 'text-muted-foreground/45'
                 }`}>
                   {quickPostText.length}/280
                 </span>
@@ -474,18 +474,18 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
                   id="dock-submit-button"
                   size="sm" 
                   disabled={!quickPostText.trim() || createPostMutation.isPending}
-                  className={`h-9.5 px-3 rounded-lg flex items-center gap-1.5 transition-all text-xs font-semibold shrink-0 ${
+                  className={`h-8 px-3 rounded-md flex items-center gap-1.5 transition-all text-xs font-semibold shrink-0 ${
                     quickPostText.trim() 
-                      ? 'bg-primary text-primary-foreground hover:opacity-90 shadow-xs cursor-pointer' 
-                      : 'bg-muted text-muted-foreground/40 cursor-not-allowed border border-border/60'
+                      ? 'bg-primary text-primary-foreground hover:opacity-90 shadow-none cursor-pointer' 
+                      : 'bg-muted/40 text-muted-foreground/35 cursor-not-allowed border-0'
                   }`}
                 >
                   {createPostMutation.isPending ? (
-                    <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   ) : (
                     <>
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Instadraft</span>
+                      <Send className="w-3 h-3" />
+                      <span>Draft</span>
                     </>
                   )}
                 </Button>

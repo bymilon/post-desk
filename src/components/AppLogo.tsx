@@ -6,7 +6,7 @@ interface AppLogoProps {
 
 export function AppLogo({ className = '' }: AppLogoProps) {
   return (
-    <div className={`relative flex items-center justify-center w-10 h-10 rounded-xl bg-card border border-border text-primary shadow-xs cursor-pointer transition-colors hover:border-primary/45 ${className}`}>
+    <div className={`relative flex items-center justify-center w-9 h-9 rounded-md bg-card border border-border/20 text-primary cursor-pointer transition-colors hover:border-primary/45 ${className}`}>
       <svg className="w-5.5 h-5.5 select-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Back Card (Ideas / Amber workspace color) - flat depth */}
         <rect 
