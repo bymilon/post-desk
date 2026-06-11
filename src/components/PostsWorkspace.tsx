@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { 
   FileText, 
   Grid, 
@@ -9,12 +10,19 @@ import {
   SlidersHorizontal, 
   Filter, 
   X, 
-  ArrowUpDown
+  ArrowUpDown,
+  Sparkles,
+  Pin,
+  Layers,
+  CheckCircle2,
+  Send,
+  AlertCircle
 } from 'lucide-react';
-import { usePosts } from '@/lib/queries';
+import { usePosts, useCreatePost } from '@/lib/queries';
 import { CreatePostForm } from '@/components/CreatePostForm';
 import { PostCard } from '@/components/PostCard';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 
 interface PostsWorkspaceProps {
   searchQuery: string;
@@ -30,6 +38,32 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [usedFilter, setUsedFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('recent');
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState<boolean>(false);
+
+  // Quick Post Draft Dock states
+  const [quickPostText, setQuickPostText] = useState('');
+  const [quickPostType, setQuickPostType] = useState<'standard' | 'thread'>('standard');
+  const createPostMutation = useCreatePost();
+
+  const handleQuickPostSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickPostText.trim()) {
+      return;
+    }
+    
+    createPostMutation.mutate(
+      { content: quickPostText.trim(), postType: quickPostType },
+      {
+        onSuccess: () => {
+          toast.success(`Successfully added quick desk draft!`);
+          setQuickPostText('');
+        },
+        onError: (err: any) => {
+          toast.error(`Failed to submit: ${err.message}`);
+        }
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -92,128 +126,381 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header and Search Sub-bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight text-foreground flex items-center gap-2">
-            Workspace Content
-            <Badge variant="outline" className="font-mono text-[10px] h-5 px-1.5 font-bold">
-              {rawPosts.length} total
-            </Badge>
-          </h2>
-          <p className="text-xs text-muted-foreground">Search, filter, and quick publish drafts.</p>
-        </div>
-        <div className="w-full md:w-80">
-          <div className="relative">
-            <Input
-              type="search"
-              placeholder="Search posts (Full Text Search)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-card w-full text-sm pl-3 pr-10 shadow-xs h-9"
-            />
-            {searchQuery && (
+    <div className="space-y-4">
+      {/* High-Performance Workspace Control Center */}
+      <div id="workspace-control-hub" className="border border-border/70 bg-card rounded-2xl p-4 md:p-5 shadow-xs transition-all space-y-4">
+        
+        {/* Row 1: Header / Search / View toggler */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/30">
+          <div className="flex items-center gap-3">
+            <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-1.5 font-sans">
+              Workspace Desk
+              <Badge variant="secondary" className="font-mono text-[10.5px] h-4.5 px-1.5 font-bold bg-muted/65 text-muted-foreground border border-border/80">
+                {rawPosts.length} total
+              </Badge>
+            </h2>
+
+            {/* Live View Mode segment inside the header block */}
+            <div className="flex items-center border border-border/85 rounded-lg bg-muted/40 p-0.5 h-7">
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-1 top-1 h-7 w-7 text-muted-foreground hover:text-foreground"
-                onClick={() => setSearchQuery('')}
+                className={`h-5.5 w-5.5 rounded-md p-1 transition-all ${viewMode === 'grid' ? 'bg-background text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setViewMode('grid')}
+                title="Grid View"
               >
-                <X className="h-3 w-3" />
+                <Grid className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-5.5 w-5.5 rounded-md p-1 transition-all ${viewMode === 'list' ? 'bg-background text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setViewMode('list')}
+                title="List View"
+              >
+                <List className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Right aligned Search field */}
+          <div className="w-full sm:w-64">
+            <div className="relative">
+              <Input
+                type="search"
+                placeholder="Search posts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-muted/15 w-full text-xs pl-3 pr-8 shadow-none h-8 border-border/60"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-0.5 h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: 1-Click Preset Ribbon & Advanced Filters Trigger */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
+          {/* Quick Desk Modes Ribbon as High-Density Inline Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {/* Pill ALL */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setUsedFilter('all');
+                    setStatusFilter('all');
+                    setTypeFilter('all');
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                    (usedFilter === 'all' && statusFilter === 'all' && typeFilter === 'all')
+                      ? 'bg-primary/10 border-primary/25 text-primary' 
+                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>All Postings</span>
+                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                    {rawPosts.length}
+                  </span>
+                </button>
+              } />
+              <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
+                Show entire workspace feed
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Pill Fresh */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setUsedFilter('unused');
+                    setStatusFilter('all');
+                    setTypeFilter('all');
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                    (usedFilter === 'unused' && statusFilter === 'all' && typeFilter === 'all')
+                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-600 dark:text-amber-400' 
+                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Fresh & Unused</span>
+                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                    {rawPosts.filter((p: any) => !p.used).length}
+                  </span>
+                </button>
+              } />
+              <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
+                Unposted / Fresh drafts
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Pill Pinned */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setUsedFilter('all');
+                    setStatusFilter('pinned');
+                    setTypeFilter('all');
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                    (statusFilter === 'pinned' && usedFilter === 'all' && typeFilter === 'all')
+                      ? 'bg-indigo-500/10 border-indigo-500/25 text-indigo-600 dark:text-indigo-400' 
+                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                  }`}
+                >
+                  <Pin className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Pinned Reference</span>
+                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                    {rawPosts.filter((p: any) => p.status === 'pinned').length}
+                  </span>
+                </button>
+              } />
+              <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
+                Templates & references
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Pill Threads */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setUsedFilter('all');
+                    setStatusFilter('all');
+                    setTypeFilter('thread');
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                    (typeFilter === 'thread' && usedFilter === 'all' && statusFilter === 'all')
+                      ? 'bg-purple-500/10 border-purple-500/25 text-purple-600 dark:text-purple-400' 
+                      : 'bg-card border-border/60 text-muted-foreground hover:text-foreground hover:border-border'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5 text-purple-500" />
+                  <span>Threads Desk</span>
+                  <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.2 bg-muted/75 text-muted-foreground rounded border border-border/45">
+                    {rawPosts.filter((p: any) => p.postType === 'thread').length}
+                  </span>
+                </button>
+              } />
+              <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
+                Segment series threads
+              </TooltipContent>
+            </Tooltip>
+          </div>
+
+          {/* Toggle Sliders controls */}
+          <div className="flex items-center gap-2">
+            {hasActiveFilters && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={resetFilters}
+                className="h-8 px-2 text-[11px] font-semibold text-muted-foreground hover:text-foreground hover:bg-muted"
+              >
+                Clear Presets
               </Button>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* Modern Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 border border-border/65 bg-muted/20 dark:bg-muted/10 rounded-xl shadow-xs">
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Status Filter */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-0.5">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 py-0.5 text-xs font-medium focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/40 transition-all font-sans"
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
+              className={`h-8 px-3 text-xs font-semibold flex items-center gap-1.5 rounded-lg transition-all border ${
+                isFiltersExpanded 
+                  ? 'bg-primary/5 text-primary border-primary/25' 
+                  : 'bg-background hover:bg-muted/80 border-border/80'
+              }`}
             >
-              <option value="all">All Statuses</option>
-              <option value="draft">Drafts</option>
-              <option value="published">Published</option>
-              <option value="pinned">Pinned</option>
-              <option value="bookmarked">Bookmarked</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-
-          {/* Type Filter */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-0.5">Post Type</label>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 py-0.5 text-xs font-medium focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/40 transition-all font-sans"
-            >
-              <option value="all">All Types</option>
-              <option value="standard">Standard</option>
-              <option value="thread">Threads</option>
-            </select>
-          </div>
-
-          {/* Used Filter */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-0.5">Usage</label>
-            <select
-              value={usedFilter}
-              onChange={(e) => setUsedFilter(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 py-0.5 text-xs font-medium focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/40 transition-all font-sans"
-            >
-              <option value="all">All Usage</option>
-              <option value="unused">Unused</option>
-              <option value="used">Used</option>
-            </select>
-          </div>
-
-          {/* Sort selector */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-0.5 flex items-center gap-1">
-              <ArrowUpDown className="w-2.5 h-2.5" /> Sort
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 py-0.5 text-xs font-medium focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/40 transition-all font-sans"
-            >
-              <option value="recent">Recently Updated</option>
-              <option value="oldest">Oldest First</option>
-              <option value="characters">Length (Longest)</option>
-            </select>
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Advanced Filters</span>
+            </Button>
           </div>
         </div>
 
-        {/* View Mode Switcher */}
-        <div className="flex items-center gap-2 self-end md:self-center">
-          <div className="flex items-center border border-border rounded-lg bg-card/60 p-1 shadow-sm h-9">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-7 w-7 rounded-md p-1 transition-all ${viewMode === 'grid' ? 'bg-muted/80 text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
-              onClick={() => setViewMode('grid')}
-              title="Grid View"
+        {/* Row 3: Sliding Advanced Filters drawer */}
+        <AnimatePresence>
+          {isFiltersExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="overflow-hidden"
             >
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-7 w-7 rounded-md p-1 transition-all ${viewMode === 'list' ? 'bg-muted/80 text-foreground font-semibold shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
-              onClick={() => setViewMode('list')}
-              title="List View"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
+              <div className="pt-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 bg-muted/15 border border-border/40 p-3 rounded-xl">
+                  {/* Status */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Status</label>
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                    >
+                      <option value="all">All Statuses</option>
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="pinned">Pinned</option>
+                      <option value="bookmarked">Bookmarked</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </div>
+
+                  {/* Post Type */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Post Type</label>
+                    <select
+                      value={typeFilter}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                    >
+                      <option value="all">All Types</option>
+                      <option value="standard">Standard</option>
+                      <option value="thread">Threads</option>
+                    </select>
+                  </div>
+
+                  {/* Usage */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Usage Status</label>
+                    <select
+                      value={usedFilter}
+                      onChange={(e) => setUsedFilter(e.target.value)}
+                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                    >
+                      <option value="all">All Usage</option>
+                      <option value="unused">Unused Drafts</option>
+                      <option value="used">Used / Posted</option>
+                    </select>
+                  </div>
+
+                  {/* Sort */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5 flex items-center gap-1">
+                      <ArrowUpDown className="w-2.5 h-2.5" /> Sort Sequence
+                    </label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                    >
+                      <option value="recent">Recently Used</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="characters">Length (Longest)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Row 4: Single line streamlined Instadraft tool */}
+        <div className="pt-2 border-t border-border/30">
+          <form onSubmit={handleQuickPostSubmit} className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
+            
+            {/* Inline Type Selector with high density */}
+            <div className="flex items-center border border-border bg-background rounded-lg p-0.5 h-9.5 shrink-0 md:w-44">
+              <button
+                type="button"
+                onClick={() => setQuickPostType('standard')}
+                className={`flex-1 flex items-center justify-center gap-1 h-full text-[11px] font-bold rounded-md transition-all ${
+                  quickPostType === 'standard' 
+                    ? 'bg-primary/5 text-primary' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Standard</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setQuickPostType('thread')}
+                className={`flex-1 flex items-center justify-center gap-1 h-full text-[11px] font-bold rounded-md transition-all ${
+                  quickPostType === 'thread' 
+                    ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Thread</span>
+              </button>
+            </div>
+
+            {/* Input with embedded character counts */}
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                id="dock-fast-input-field"
+                placeholder={
+                  quickPostType === 'thread' 
+                    ? "Compose sequential thread slide or bullet hook..." 
+                    : "Compose converting hook or tweet draft, and press Enter..."
+                }
+                value={quickPostText}
+                onChange={(e) => setQuickPostText(e.target.value)}
+                className="bg-muted/15 border-border/75 text-xs h-9.5 pl-3 pr-14 shadow-none focus-visible:ring-1 focus-visible:ring-primary w-full rounded-lg"
+              />
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <span className={`text-[10px] font-mono font-bold ${
+                  (280 - quickPostText.length) < 0 ? 'text-destructive' : 'text-muted-foreground/50'
+                }`}>
+                  {quickPostText.length}/280
+                </span>
+              </div>
+            </div>
+
+            {/* Action button */}
+            <Tooltip>
+              <TooltipTrigger render={
+                <Button 
+                  type="submit" 
+                  id="dock-submit-button"
+                  size="sm" 
+                  disabled={!quickPostText.trim() || createPostMutation.isPending}
+                  className={`h-9.5 px-3 rounded-lg flex items-center gap-1.5 transition-all text-xs font-semibold shrink-0 ${
+                    quickPostText.trim() 
+                      ? 'bg-primary text-primary-foreground hover:opacity-90 shadow-xs cursor-pointer' 
+                      : 'bg-muted text-muted-foreground/40 cursor-not-allowed border border-border/60'
+                  }`}
+                >
+                  {createPostMutation.isPending ? (
+                    <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Instadraft</span>
+                    </>
+                  )}
+                </Button>
+              } />
+              <TooltipContent side="top" className="font-semibold text-xs py-1 px-2">
+                Add Desk Draft Instantly
+              </TooltipContent>
+            </Tooltip>
+          </form>
+
+          {quickPostText.length > 280 && (
+            <p className="text-[10px] text-destructive flex items-center gap-1 font-semibold px-1 mt-2.5 animate-pulse">
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" /> Exceeds X character limit by {quickPostText.length - 280} text characters.
+            </p>
+          )}
         </div>
       </div>
 
