@@ -156,11 +156,11 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <CreatePostForm />
               </div>
-            ) : (
+            ) : activeView === 'inspirations' ? (
               <div className="flex items-center gap-2">
                 <CreateInspirationForm />
               </div>
-            )}
+            ) : null}
           </div>
         </header>
 
