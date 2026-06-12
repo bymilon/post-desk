@@ -13,6 +13,15 @@
   "vars": {
     "NODE_ENV": "production"
   },
+   "env": {
+    "demo": {
+      "name": "post-desk-demo",
+      "vars": {
+        "NODE_ENV": "production",
+        "API_KEY": "p1pFSeMVwvUdyQiO9lbcH5rrRB9RmwdW"
+      }
+    }
+  },
   "observability": {
     "enabled": true
   }

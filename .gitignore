@@ -6,6 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+.env.demo
 /docs/developer_methodology.md
 /docs/system_design_document.md
 /docs/bootstrapper_context.md
