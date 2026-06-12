@@ -6,8 +6,34 @@ import { xPosts, inspirationPosts } from './schema';
 import { generateKey } from '../lib/key';
 
 async function main() {
-  console.log('Running programmatic migrations with Drizzle...');
   const db = getDb();
+  const isFresh = process.argv.includes('--fresh') || process.env.DB_FRESH === 'true';
+  const isFlushOnly = process.argv.includes('--flush') || process.env.DB_FLUSH === 'true';
+
+  if (isFresh) {
+    console.log('--- FRESH DATABASE SETUP TRIGGERED ---');
+    console.log('Safely dropping all existing tables, FTS elements, triggers, and migration tracking...');
+    try {
+      // Drop triggers explicitly just in case, then drop tables
+      const dropStatements = [
+        `DROP TRIGGER IF EXISTS x_posts_fts_insert;`,
+        `DROP TRIGGER IF EXISTS x_posts_fts_delete;`,
+        `DROP TRIGGER IF EXISTS x_posts_fts_update;`,
+        `DROP TABLE IF EXISTS x_posts_fts;`,
+        `DROP TABLE IF EXISTS x_posts;`,
+        `DROP TABLE IF EXISTS inspiration_posts;`,
+        `DROP TABLE IF EXISTS __drizzle_migrations;`
+      ];
+      for (const statement of dropStatements) {
+        await db.run(sql.raw(statement));
+      }
+      console.log('All existing database structures dropped successfully.');
+    } catch (dropErr) {
+      console.warn('Error occurred while trying to clean up tables (it might be a completely empty DB):', dropErr);
+    }
+  }
+
+  console.log('Running programmatic migrations with Drizzle...');
   try {
     await migrate(db, { migrationsFolder: './src/db/migrations' });
     console.log('Migrations applied successfully.');
@@ -61,7 +87,13 @@ async function main() {
     console.log('FTS5 and Triggers successfully set up.');
 
     // --- SEEDING SECTION ---
-    if (process.env.SKIP_SEED === 'true' || process.argv.includes('--no-seed')) {
+    if (isFlushOnly) {
+      console.log('--- PURGING DATABASE CONTENT ONLY ---');
+      console.log('Emptying x_posts and inspiration_posts content tables...');
+      await db.delete(xPosts);
+      await db.delete(inspirationPosts);
+      console.log('Database content completely flushed/purged.');
+    } else if (process.env.SKIP_SEED === 'true' || process.argv.includes('--no-seed')) {
       console.log('Skipping database seeding step as requested (--no-seed / SKIP_SEED=true).');
     } else {
       console.log('Clearing existing records for a fresh seed...');

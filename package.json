@@ -18,6 +18,10 @@
     "db:migrate:noseed": "tsx src/db/setup.ts --no-seed",
     "db:migrate:demo": "DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts",
     "db:migrate:demo:noseed": "DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts --no-seed",
+    "db:setup:fresh": "tsx src/db/setup.ts --fresh",
+    "db:setup:flush": "tsx src/db/setup.ts --flush",
+    "db:setup:demo:fresh": "cross-env DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts --fresh",
+    "db:setup:demo:flush": "cross-env DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts --flush",
     "db:studio": "drizzle-kit studio",
     "db:setup": "tsx src/db/setup.ts"
   },
