@@ -14,3 +14,13 @@ coverage/
 /docs/ai_agent_instructions.md
 /docs/social_media_strategy.md
 /docs/codebase_audit_and_features.md
+/docs/01-*
+/docs/*-audit-*.md
+
+# Generic prefixes for files not meant for OSS
+internal-*
+private-*
+secret-*
+draft-*
+*.private.*
+*.internal.*
