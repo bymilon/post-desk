@@ -18,6 +18,7 @@ const CreatePostForm = lazy(() => import('@/components/CreatePostForm').then(m =
 const CreateInspirationForm = lazy(() => import('@/components/CreateInspirationForm').then(m => ({ default: m.CreateInspirationForm })));
 const PostsWorkspace = lazy(() => import('@/components/PostsWorkspace').then(m => ({ default: m.PostsWorkspace })));
 const InspirationsBoard = lazy(() => import('@/components/InspirationsBoard').then(m => ({ default: m.InspirationsBoard })));
+const CopilotModal = lazy(() => import('@/components/CopilotModal').then(m => ({ default: m.CopilotModal })));
 
 type ViewContext = 'posts' | 'inspirations';
 
@@ -156,6 +157,9 @@ export default function App() {
           <div className="flex items-center gap-4">
             {activeView === 'posts' ? (
               <div className="flex items-center gap-2">
+                <Suspense fallback={<Skeleton className="h-8 w-[100px] rounded-md" />}>
+                  <CopilotModal />
+                </Suspense>
                 <Suspense fallback={<Skeleton className="h-8 w-[100px] rounded-md" />}>
                   <CreatePostForm />
                 </Suspense>

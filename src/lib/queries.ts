@@ -19,9 +19,24 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
     headers: getHeaders(options.headers as Record<string, string>),
   });
   if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    let errorMsg = `API Error: ${res.status} ${res.statusText}`;
+    try {
+      const errorData = await res.json();
+      if (errorData.error) errorMsg = errorData.error;
+    } catch {}
+    throw new Error(errorMsg);
   }
   return res.json();
+}
+
+export function useGenerateDrafts() {
+  return useMutation({
+    mutationFn: (payload: { intent: string, context: string, postType: string }) => apiFetch('/copilot/generate-drafts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }),
+  });
 }
 
 export function usePosts(searchQuery: string = '') {

@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import postsRouter from './features/posts';
 import inspirationRouter from './features/inspiration';
+import copilotRouter from './features/copilot';
 import { authMiddleware } from './lib/auth';
 
 const app = new Hono();
@@ -17,6 +18,7 @@ const v1 = new Hono();
 v1.use('/*', authMiddleware);
 v1.route('/posts', postsRouter);
 v1.route('/inspirations', inspirationRouter);
+v1.route('/copilot', copilotRouter);
 
 app.route('/api/v1', v1);
 

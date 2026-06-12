@@ -12,6 +12,8 @@
 [![Instagram](https://img.shields.io/badge/Instagram-Follow-E4405F?logo=instagram)](https://www.instagram.com/withmilon)
 [![Threads](https://img.shields.io/badge/Threads-Follow-000000?logo=threads)](https://www.threads.com/@withmilon)
 
+![PostDesk](https://lh3.googleusercontent.com/d/10S7xdtSbYu2-VuNVxa2Cb-FV6LeXQVaL=s1280-no-nu-rw)
+
 PostDesk is a production-grade, full-stack content operating system and growth cockpit for X (Twitter) creators, developer advocates, and teams. Built with a developer-first mindset, it leverages **Vertical Slice Architecture (VSA)** and **CQRS boundaries** to manage, refine, and discover content ideas without friction.
 
 Developed and maintained by **Milon Biswas** ([@milonspace on X](https://x.com/milonspace)).
