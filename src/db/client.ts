@@ -4,19 +4,18 @@ import { Result, Ok, Err } from 'ts-results-es';
 import { DatabaseError } from '@/lib/errors';
 
 export function initializeDatabase() {
-  const url = process.env.TURSO_DATABASE_URL;
+  const url = process.env.TURSO_DATABASE_URL || 'file:local.db';
   const authToken = process.env.TURSO_AUTH_TOKEN;
-
-  if (!url) {
-    throw new Error('TURSO_DATABASE_URL is not defined in environment variables');
-  }
+  const isDev = process.env.NODE_ENV !== 'production';
 
   const client = createClient({
     url,
     authToken,
   });
 
-  return drizzle(client);
+  return drizzle(client, {
+    logger: isDev,
+  });
 }
 
 // Lazy initialization wrapper

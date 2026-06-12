@@ -6,10 +6,19 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:demo": "vite build --mode demo && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit && oxlint",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:push:demo": "DOTENV_CONFIG_PATH=.env.demo drizzle-kit push",
+    "db:migrate": "tsx src/db/setup.ts",
+    "db:migrate:noseed": "tsx src/db/setup.ts --no-seed",
+    "db:migrate:demo": "DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts",
+    "db:migrate:demo:noseed": "DOTENV_CONFIG_PATH=.env.demo tsx src/db/setup.ts --no-seed",
+    "db:studio": "drizzle-kit studio",
     "db:setup": "tsx src/db/setup.ts"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { generateKey } from '@/lib/key';
 
@@ -19,7 +19,11 @@ export const xPosts = sqliteTable('x_posts', {
   // Unix timestamp representation in seconds
   createdAt: integer('created_at').notNull().default(sql`(cast(unixepoch() as int))`),
   updatedAt: integer('updated_at').notNull().default(sql`(cast(unixepoch() as int))`),
-});
+}, (table) => ({
+  statusIdx: index('x_posts_status_idx').on(table.status),
+  postTypeIdx: index('x_posts_post_type_idx').on(table.postType),
+  createdAtIdx: index('x_posts_created_at_idx').on(table.createdAt),
+}));
 
 export const inspirationPosts = sqliteTable('inspiration_posts', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -29,4 +33,6 @@ export const inspirationPosts = sqliteTable('inspiration_posts', {
   authorHandle: text('author_handle'),
   tags: text('tags'),
   createdAt: integer('created_at').notNull().default(sql`(cast(unixepoch() as int))`),
-});
+}, (table) => ({
+  createdAtIdx: index('inspiration_posts_created_at_idx').on(table.createdAt),
+}));
