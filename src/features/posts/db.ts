@@ -19,7 +19,7 @@ export async function insertPost(payload: CreatePostPayload) {
 
 export async function searchPosts(opts: SearchPostsQueryOutput) {
   return withDb(async (db) => {
-    const limit = opts.limit || 20;
+    const limit = opts.limit ?? 20;
 
     if (opts.q) {
       // Offset pagination for BM25 since rank changes and isn't unique

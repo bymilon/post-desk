@@ -319,10 +319,10 @@ export function PostCard({ post, viewMode }: PostCardProps) {
   return (
     <div 
       id={`post-grid-card-${post.key}`}
-      className={`relative flex flex-col justify-between overflow-hidden border border-border/45 hover:border-border/80 bg-card/40 rounded-lg p-3.5 transition-all duration-200 group/card ${post.used ? 'opacity-70 bg-muted/5' : ''}`}
+      className={`relative flex flex-col justify-between h-full overflow-hidden border border-border/45 hover:border-border/80 bg-card/40 rounded-xl p-3.5 transition-all duration-200 group/card ${post.used ? 'opacity-70 bg-muted/5' : ''}`}
     >
       {/* Dynamic Header */}
-      <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-border/20">
+      <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-border/15">
         <div className="flex items-center gap-1.5">
           <span className="font-mono text-[9.5px] font-bold tracking-tight text-foreground/80 bg-muted/60 px-1.5 py-0.5 rounded-sm border border-border/20">
             {post.key}
@@ -346,14 +346,14 @@ export function PostCard({ post, viewMode }: PostCardProps) {
       </div>
 
       {/* Body Content */}
-      <div className="flex-1 pb-3">
-        <p className={`text-[12.5px] leading-relaxed font-sans transition-all text-foreground/90 ${post.used ? 'text-muted-foreground/75 italic line-through decoration-muted-foreground/30' : 'font-medium'}`}>
+      <div className="flex-1 pb-2">
+        <p className={`text-[12px] md:text-[12.5px] leading-relaxed font-sans transition-all text-foreground/90 whitespace-pre-wrap ${post.used ? 'text-muted-foreground/75 italic line-through decoration-muted-foreground/30' : 'font-medium'}`}>
           {post.content}
         </p>
       </div>
 
       {/* Footer / Meta section */}
-      <div className="space-y-2 pt-2 border-t border-border/25">
+      <div className="space-y-1.5 pt-2 border-t border-border/20">
         {/* Compact Character & Limit indicator line */}
         <div className="w-full">
           <div className="flex justify-between items-center text-[9px] mb-1 font-mono tracking-tight text-muted-foreground/75">
@@ -373,7 +373,7 @@ export function PostCard({ post, viewMode }: PostCardProps) {
         </div>
 
         {/* Clean, Icon-based Bottom Action Toolbar */}
-        <div className="flex items-center justify-between w-full pt-1">
+        <div className="flex items-center justify-between w-full pt-0.5">
           <div className="flex items-center">
             {post.used && (
               <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 bg-emerald-500/5 px-1.5 py-0.5 rounded-sm border border-emerald-500/10">

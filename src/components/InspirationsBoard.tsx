@@ -11,7 +11,6 @@ import {
   List
 } from 'lucide-react';
 import { CreateInspirationForm } from '@/components/CreateInspirationForm';
-import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 
 export function InspirationsBoard() {
@@ -48,7 +47,7 @@ export function InspirationsBoard() {
     );
   }
 
-  const inspirations = data?.data || [];
+  const inspirations = data?.data ?? [];
 
   // Split tags helper - beautiful custom borders
   const renderTags = (tagsString?: string) => {
@@ -107,11 +106,7 @@ export function InspirationsBoard() {
       </div>
 
       {inspirations.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col items-center justify-center p-12 text-center border rounded-lg border-dashed border-border/30 bg-muted/5 mt-4"
-        >
+        <div className="flex flex-col items-center justify-center p-12 text-center border rounded-lg border-dashed border-border/30 bg-muted/5 mt-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-amber-500/10 text-amber-500 border border-amber-500/10 mb-3">
             <Lightbulb className="h-5 w-5" />
           </div>
@@ -120,112 +115,39 @@ export function InspirationsBoard() {
             Record copywriting examples, formatting frames, or references of viral content that fuel your brand.
           </p>
           <CreateInspirationForm />
-        </motion.div>
+        </div>
       ) : (
-        <AnimatePresence mode="popLayout">
-          <div 
-            className={
-              inspirationView === 'grid' 
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5' 
-                : 'flex flex-col gap-2'
-            }
-          >
-            {inspirations.map((inspiration: any) => (
-              <motion.div
-                key={inspiration.id}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.2 }}
-                className={inspirationView === 'dense' ? 'border-b border-border/15 last:border-b-0 pb-1.5' : ''}
+        <div 
+          className={
+            inspirationView === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5' 
+              : 'flex flex-col gap-2'
+          }
+        >
+          {inspirations.map((inspiration: any) => (
+            <div
+              key={inspiration.id}
+              className={inspirationView === 'dense' ? 'border-b border-border/15 last:border-b-0 pb-1.5' : ''}
+            >
+              <div 
+                className={`group relative overflow-hidden transition-all duration-200 border border-border/45 hover:border-amber-500/20 bg-card/40 rounded-lg p-3.5 ${
+                  inspirationView === 'dense' ? 'flex items-center justify-between gap-4 border-0 hover:bg-muted/10 p-2.5 rounded-md' : 'flex flex-col justify-between h-full'
+                }`}
               >
-                <div 
-                  className={`group relative overflow-hidden transition-all duration-200 border border-border/45 hover:border-amber-500/20 bg-card/40 rounded-lg p-3.5 ${
-                    inspirationView === 'dense' ? 'flex items-center justify-between gap-4 border-0 hover:bg-muted/10 p-2.5 rounded-md' : 'flex flex-col justify-between h-full'
-                  }`}
-                >
-                  {inspirationView === 'grid' ? (
-                    <>
-                      <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-border/20">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-[9px] font-bold text-amber-600 bg-amber-500/10 px-1.5 py-0.5 rounded-sm border border-amber-500/10 flex items-center gap-1">
-                            <Lightbulb className="w-2.5 h-2.5" /> Idea #{inspiration.id}
-                          </span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 rounded-md opacity-40 group-hover:opacity-100 transition-opacity hover:bg-muted/80 text-muted-foreground hover:text-foreground"
-                          onClick={() => handleCopy(inspiration.id, inspiration.content)}
-                          title="Copy reference text"
-                        >
-                          {copiedId === inspiration.id ? (
-                            <Check className="w-3 h-3 text-emerald-500" />
-                          ) : (
-                            <Copy className="w-3 h-3" />
-                          )}
-                        </Button>
-                      </div>
-
-                      <div className="flex-1 pb-3">
-                        <p className="text-[12.5px] leading-relaxed text-foreground/95 whitespace-pre-wrap font-medium">
-                          {inspiration.content}
-                        </p>
-                      </div>
-
-                      {/* Unified footer strip */}
-                      {(inspiration.tags || inspiration.sourceUrl) && (
-                        <div className="space-y-2 pt-2 border-t border-border/25">
-                          {inspiration.tags && (
-                            <div className="flex flex-wrap gap-1 w-full">
-                              {renderTags(inspiration.tags)}
-                            </div>
-                          )}
-                          {inspiration.sourceUrl && (
-                            <div className="flex items-center justify-between w-full text-[10px] pt-0.5">
-                              <a 
-                                href={inspiration.sourceUrl} 
-                                target="_blank" 
-                                rel="noreferrer" 
-                                className="text-[9.5px] font-medium text-amber-600/90 dark:text-amber-400 hover:underline flex items-center gap-0.5 font-mono truncate max-w-[180px]"
-                              >
-                                <ExternalLink className="w-2.5 h-2.5" /> Source reference link
-                              </a>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    // Dense Row Layout
-                    <div className="flex items-center justify-between w-full gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                          <span className="font-mono text-[9px] font-bold text-amber-600 bg-amber-500/10 px-1.5 py-0.2 rounded-sm border border-amber-500/10">
-                            #{inspiration.id}
-                          </span>
-                          {inspiration.tags && renderTags(inspiration.tags)}
-                        </div>
-                        <p className="text-[12.5px] text-foreground/90 font-medium truncate">
-                          {inspiration.content}
-                        </p>
-                        {inspiration.sourceUrl && (
-                          <a 
-                            href={inspiration.sourceUrl} 
-                            target="_blank" 
-                            rel="noreferrer" 
-                            className="text-[9.5px] text-amber-600 hover:underline flex items-center gap-0.5 mt-0.5"
-                          >
-                            <ExternalLink className="w-2.5 h-2.5" /> Source Link
-                          </a>
-                        )}
+                {inspirationView === 'grid' ? (
+                  <>
+                    <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-border/20">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[9px] font-bold text-amber-600 bg-amber-500/10 px-1.5 py-0.5 rounded-sm border border-amber-500/10 flex items-center gap-1">
+                          <Lightbulb className="w-2.5 h-2.5" /> Idea #{inspiration.id}
+                        </span>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 rounded-md shrink-0 text-muted-foreground hover:text-foreground"
+                        className="h-6 w-6 rounded-md opacity-40 group-hover:opacity-100 transition-opacity hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                         onClick={() => handleCopy(inspiration.id, inspiration.content)}
+                        title="Copy reference text"
                       >
                         {copiedId === inspiration.id ? (
                           <Check className="w-3 h-3 text-emerald-500" />
@@ -234,12 +156,78 @@ export function InspirationsBoard() {
                         )}
                       </Button>
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </AnimatePresence>
+
+                    <div className="flex-1 pb-3">
+                      <p className="text-[12.5px] leading-relaxed text-foreground/95 whitespace-pre-wrap font-medium">
+                        {inspiration.content}
+                      </p>
+                    </div>
+
+                    {/* Unified footer strip */}
+                    {(inspiration.tags || inspiration.sourceUrl) && (
+                      <div className="space-y-2 pt-2 border-t border-border/25">
+                        {inspiration.tags && (
+                          <div className="flex flex-wrap gap-1 w-full">
+                            {renderTags(inspiration.tags)}
+                          </div>
+                        )}
+                        {inspiration.sourceUrl && (
+                          <div className="flex items-center justify-between w-full text-[10px] pt-0.5">
+                            <a 
+                              href={inspiration.sourceUrl} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="text-[9.5px] font-medium text-amber-600/90 dark:text-amber-400 hover:underline flex items-center gap-0.5 font-mono truncate max-w-[180px]"
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" /> Source reference link
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  // Dense Row Layout
+                  <div className="flex items-center justify-between w-full gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                        <span className="font-mono text-[9px] font-bold text-amber-600 bg-amber-500/10 px-1.5 py-0.2 rounded-sm border border-amber-500/10">
+                          #{inspiration.id}
+                        </span>
+                        {inspiration.tags && renderTags(inspiration.tags)}
+                      </div>
+                      <p className="text-[12.5px] text-foreground/90 font-medium truncate">
+                        {inspiration.content}
+                      </p>
+                      {inspiration.sourceUrl && (
+                        <a 
+                          href={inspiration.sourceUrl} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="text-[9.5px] text-amber-600 hover:underline flex items-center gap-0.5 mt-0.5"
+                        >
+                          <ExternalLink className="w-2.5 h-2.5" /> Source Link
+                        </a>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-md shrink-0 text-muted-foreground hover:text-foreground"
+                      onClick={() => handleCopy(inspiration.id, inspiration.content)}
+                    >
+                      {copiedId === inspiration.id ? (
+                        <Check className="w-3 h-3 text-emerald-500" />
+                      ) : (
+                        <Copy className="w-3 h-3" />
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

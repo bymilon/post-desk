@@ -20,7 +20,7 @@ export async function insertInspiration(payload: CreateInspirationPayload) {
 
 export async function getInspirations(opts: GetInspirationsQueryOutput) {
   return withDb(async (db) => {
-    const limit = opts.limit || 20;
+    const limit = opts.limit ?? 20;
     
     let query = db.select().from(inspirationPosts);
     

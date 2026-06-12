@@ -11,10 +11,13 @@ This knowledge base uses clear, dense, un-slop structures intended for high-spee
 - [[02-standards/01-Tool-Stack]] - Library choices, purpose, and framework specifics.
 - [[02-standards/02-Folder-Structure]] - Explanation of the current state and intended future state of the codebase.
 - [[02-standards/03-Coding-Conventions]] - Design patterns, testing strategies, error handling mandates.
+- [[02-standards/04-Visual-Design-System]] - Guidelines on side panels, modern navigation rails, aesthetic rules, and micro-interactive widgets.
 - [[03-agents/01-Wiki-Guidelines]] - Instructions for AI agents on how to read, search, update, and maintain this wiki.
 - [[04-tasks/2026-06-12-postdesk-improvements-TASKS.md]] - Single source of truth for all current dx and improvement pipeline tasks.
 - [[05-guides/01-Wiki-Building-Walkthrough.md]] - Walkthrough guide explaining how the wiki was built and a step-by-step learning path.
 - [[05-guides/02-Spec-Driven-Development.md]] - Guide explaining how Spec-Driven Development (SDD) is utilized in our workflow.
+- [[05-guides/03-7-Senior-Coding-Patterns.md]] - A learning walkthrough decoding 7 coding patterns stolen from senior engineers.
+- [[05-guides/04-Navigation-Rail-Blueprint.md]] - Portable blueprint for constructing high-density left-panel navigators and quick FAB layouts.
 
 ## Getting Started
 If you are an AI Coding Agent acting within this codebase, you MUST read the `02-standards/03-Coding-Conventions.md` and `04-tasks/*` logs to orient yourself to your current objectives before writing ANY code.

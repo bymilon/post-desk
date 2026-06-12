@@ -21,7 +21,6 @@ import {
 import { usePosts, useCreatePost } from '@/lib/queries';
 import { CreatePostForm } from '@/components/CreatePostForm';
 import { PostCard } from '@/components/PostCard';
-import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 
 interface PostsWorkspaceProps {
@@ -36,7 +35,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [usedFilter, setUsedFilter] = useState<string>('all');
+  const [usedFilter, setUsedFilter] = useState<string>('unused');
   const [sortBy, setSortBy] = useState<string>('recent');
   const [isFiltersExpanded, setIsFiltersExpanded] = useState<boolean>(false);
 
@@ -83,7 +82,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
     );
   }
 
-  const rawPosts = data?.data || [];
+  const rawPosts = data?.data ?? [];
 
   // Clientside filtering
   let filteredPosts = [...rawPosts];
@@ -105,13 +104,13 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
   // Sorting
   const sortedAndFilteredPosts = filteredPosts.sort((a: any, b: any) => {
     if (sortBy === 'recent') {
-      return (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
+      return (b.updatedAt ?? b.createdAt) - (a.updatedAt ?? a.createdAt);
     }
     if (sortBy === 'oldest') {
-      return (a.updatedAt || a.createdAt) - (b.updatedAt || b.createdAt);
+      return (a.updatedAt ?? a.createdAt) - (b.updatedAt ?? b.createdAt);
     }
     if (sortBy === 'characters') {
-      return (b.content?.length || 0) - (a.content?.length || 0);
+      return (b.content?.length ?? 0) - (a.content?.length ?? 0);
     }
     return 0;
   });
@@ -334,82 +333,72 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
         </div>
 
         {/* Row 3: Sliding Advanced Filters drawer */}
-        <AnimatePresence>
-          {isFiltersExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="overflow-hidden"
-            >
-              <div className="pt-2">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 bg-muted/15 border border-border/40 p-3 rounded-xl">
-                  {/* Status */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Status</label>
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
-                    >
-                      <option value="all">All Statuses</option>
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                      <option value="pinned">Pinned</option>
-                      <option value="bookmarked">Bookmarked</option>
-                      <option value="archived">Archived</option>
-                    </select>
-                  </div>
-
-                  {/* Post Type */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Post Type</label>
-                    <select
-                      value={typeFilter}
-                      onChange={(e) => setTypeFilter(e.target.value)}
-                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
-                    >
-                      <option value="all">All Types</option>
-                      <option value="standard">Standard</option>
-                      <option value="thread">Threads</option>
-                    </select>
-                  </div>
-
-                  {/* Usage */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Usage Status</label>
-                    <select
-                      value={usedFilter}
-                      onChange={(e) => setUsedFilter(e.target.value)}
-                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
-                    >
-                      <option value="all">All Usage</option>
-                      <option value="unused">Unused Drafts</option>
-                      <option value="used">Used / Posted</option>
-                    </select>
-                  </div>
-
-                  {/* Sort */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5 flex items-center gap-1">
-                      <ArrowUpDown className="w-2.5 h-2.5" /> Sort Sequence
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
-                    >
-                      <option value="recent">Recently Used</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="characters">Length (Longest)</option>
-                    </select>
-                  </div>
-                </div>
+        {isFiltersExpanded && (
+          <div className="pt-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 bg-muted/15 border border-border/40 p-3 rounded-xl">
+              {/* Status */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Status</label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="pinned">Pinned</option>
+                  <option value="bookmarked">Bookmarked</option>
+                  <option value="archived">Archived</option>
+                </select>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+              {/* Post Type */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Post Type</label>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                >
+                  <option value="all">All Types</option>
+                  <option value="standard">Standard</option>
+                  <option value="thread">Threads</option>
+                </select>
+              </div>
+
+              {/* Usage */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5">Usage Status</label>
+                <select
+                  value={usedFilter}
+                  onChange={(e) => setUsedFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                >
+                  <option value="all">All Usage</option>
+                  <option value="unused">Unused Drafts</option>
+                  <option value="used">Used / Posted</option>
+                </select>
+              </div>
+
+              {/* Sort */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 px-0.5 flex items-center gap-1">
+                  <ArrowUpDown className="w-2.5 h-2.5" /> Sort Sequence
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="h-8 rounded-lg border border-border/70 bg-background px-2 py-0.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none cursor-pointer hover:bg-muted/35"
+                >
+                  <option value="recent">Recently Used</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="characters">Length (Longest)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Row 4: Single line streamlined Instadraft tool */}
         <div className="pt-2 border-t border-border/20">
@@ -506,11 +495,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
 
       {/* Filter Stats Banner */}
       {hasActiveFilters && (
-        <motion.div 
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between px-4 py-2.5 border border-primary/10 bg-primary/5 rounded-xl text-xs text-primary"
-        >
+        <div className="flex items-center justify-between px-4 py-2.5 border border-primary/10 bg-primary/5 rounded-xl text-xs text-primary">
           <div className="flex items-center gap-1.5 font-medium">
             <Filter className="w-3.5 h-3.5 text-primary" />
             Active filters showing <strong className="font-bold">{sortedAndFilteredPosts.length}</strong> of {rawPosts.length} posts.
@@ -523,17 +508,13 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
           >
             <X className="w-3 h-3" /> Reset options
           </Button>
-        </motion.div>
+        </div>
       )}
 
       {/* Empty States / Grid rendering */}
       {sortedAndFilteredPosts.length === 0 ? (
         rawPosts.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center p-12 text-center border rounded-2xl border-dashed border-border bg-muted/5 mt-8"
-          >
+          <div className="flex flex-col items-center justify-center p-12 text-center border rounded-2xl border-dashed border-border bg-muted/5 mt-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground shadow-sm">
               <FileText className="h-6 w-6" />
             </div>
@@ -542,7 +523,7 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
               Maintain drafts, schedule threads, and organize post cards dynamically in one dashboard.
             </p>
             <CreatePostForm />
-          </motion.div>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-12 text-center border border-border/80 bg-muted/5 rounded-2xl">
             <SlidersHorizontal className="h-8 w-8 text-muted-foreground/65 mb-3" />
@@ -556,46 +537,26 @@ export function PostsWorkspace({ searchQuery, setSearchQuery }: PostsWorkspacePr
           </div>
         )
       ) : (
-        /* Render animation containers */
-        <AnimatePresence mode="popLayout">
+        /* Render normal list/grid containers with instant rendering */
+        <>
           {viewMode === 'grid' ? (
-            <motion.div 
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 gap-5"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sortedAndFilteredPosts.map((post: any) => (
-                <motion.div
-                  key={post.key}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                >
+                <div key={post.key}>
                   <PostCard post={post} viewMode="grid" />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           ) : (
-            <motion.div 
-              layout
-              className="flex flex-col border border-border bg-card rounded-2xl divide-y divide-border/60 overflow-hidden shadow-xs"
-            >
+            <div className="flex flex-col border border-border bg-card rounded-2xl divide-y divide-border/60 overflow-hidden shadow-xs">
               {sortedAndFilteredPosts.map((post: any) => (
-                <motion.div
-                  key={post.key}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
+                <div key={post.key}>
                   <PostCard post={post} viewMode="list" />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </>
       )}
     </div>
   );

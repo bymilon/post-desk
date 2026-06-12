@@ -7,7 +7,8 @@ import {
   Lightbulb, 
   LayoutDashboard, 
   Sun, 
-  Moon
+  Moon,
+  PenLine
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { AppLogo } from '@/components/AppLogo';
@@ -193,6 +194,21 @@ export default function App() {
         </ScrollArea>
       </main>
       <Toaster position="bottom-right" closeButton richColors />
+      
+      {/* Threads-inspired Floating Quick Post FAB */}
+      <Suspense fallback={null}>
+        <CreatePostForm 
+          position="bottom-right"
+          trigger={
+            <button
+              aria-label="Create Quick Post"
+              className="fixed bottom-6 right-6 z-40 h-12 w-12 md:h-14 md:w-14 rounded-full flex items-center justify-center bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-[0_8px_30px_rgb(0,0,0,0.36)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-zinc-800 dark:border-zinc-200/65 cursor-pointer hover:-translate-y-0.5 active:scale-95 transition-all duration-150"
+            >
+              <PenLine className="w-5 h-5 md:w-5.5 md:h-5.5" />
+            </button>
+          }
+        />
+      </Suspense>
     </div>
   );
 }
