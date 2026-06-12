@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -10,12 +10,14 @@ import {
   Moon
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
-import { CreatePostForm } from '@/components/CreatePostForm';
-import { CreateInspirationForm } from '@/components/CreateInspirationForm';
-import { PostsWorkspace } from '@/components/PostsWorkspace';
-import { InspirationsBoard } from '@/components/InspirationsBoard';
 import { AppLogo } from '@/components/AppLogo';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const CreatePostForm = lazy(() => import('@/components/CreatePostForm').then(m => ({ default: m.CreatePostForm })));
+const CreateInspirationForm = lazy(() => import('@/components/CreateInspirationForm').then(m => ({ default: m.CreateInspirationForm })));
+const PostsWorkspace = lazy(() => import('@/components/PostsWorkspace').then(m => ({ default: m.PostsWorkspace })));
+const InspirationsBoard = lazy(() => import('@/components/InspirationsBoard').then(m => ({ default: m.InspirationsBoard })));
 
 type ViewContext = 'posts' | 'inspirations';
 
@@ -154,11 +156,15 @@ export default function App() {
           <div className="flex items-center gap-4">
             {activeView === 'posts' ? (
               <div className="flex items-center gap-2">
-                <CreatePostForm />
+                <Suspense fallback={<Skeleton className="h-8 w-[100px] rounded-md" />}>
+                  <CreatePostForm />
+                </Suspense>
               </div>
             ) : activeView === 'inspirations' ? (
               <div className="flex items-center gap-2">
-                <CreateInspirationForm />
+                <Suspense fallback={<Skeleton className="h-8 w-[115px] rounded-md" />}>
+                  <CreateInspirationForm />
+                </Suspense>
               </div>
             ) : null}
           </div>
@@ -168,12 +174,16 @@ export default function App() {
         <ScrollArea className="flex-1 min-h-0 w-full">
           <div className="max-w-5xl mx-auto px-6 py-6 space-y-6 animate-fade-in">
              {activeView === 'posts' ? (
-                <PostsWorkspace 
-                  searchQuery={searchQuery} 
-                  setSearchQuery={setSearchQuery} 
-                />
+                <Suspense fallback={<Skeleton className="w-full h-[600px] rounded-xl" />}>
+                  <PostsWorkspace 
+                    searchQuery={searchQuery} 
+                    setSearchQuery={setSearchQuery} 
+                  />
+                </Suspense>
              ) : (
-                <InspirationsBoard />
+                <Suspense fallback={<Skeleton className="w-full h-[600px] rounded-xl" />}>
+                  <InspirationsBoard />
+                </Suspense>
              )}
           </div>
         </ScrollArea>

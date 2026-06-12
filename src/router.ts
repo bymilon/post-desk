@@ -12,9 +12,12 @@ app.use('*', logger());
 // API Routes
 app.get('/api/health', (c) => c.json({ status: 'ok' }));
 
-// Secure API endpoints
-app.use('/api/v1/*', authMiddleware);
-app.route('/api/v1/posts', postsRouter);
-app.route('/api/v1/inspirations', inspirationRouter);
+// API Version 1
+const v1 = new Hono();
+v1.use('/*', authMiddleware);
+v1.route('/posts', postsRouter);
+v1.route('/inspirations', inspirationRouter);
+
+app.route('/api/v1', v1);
 
 export default app;
