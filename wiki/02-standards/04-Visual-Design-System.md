@@ -116,3 +116,33 @@ To maintain perfect brand alignment, verify that your new features pass the foll
 2. **Auto-focus inputs** where appropriate. Modal dialogs designed for single-screen quick drafts must automatically call `autoFocus` on the primary textarea.
 3. **No random icon packages**. Only import from `lucide-react` using named imports placed at the top of files.
 4. **Prefer standard 10px borders (`rounded-md` / `rounded-lg`)** for panels and modern inputs, but keep floating capture actions fully pill-shaped (`rounded-full`).
+
+---
+
+## 🛡️ Proper Scrollbar Aesthetics & Modal Overflows
+
+To avoid low-quality browser scrollbar styling differences and maintain a premium Swiss-modern visual discipline, developers and agents must adhere to the following rules when building scrollable cards, list panels, or modal bodies:
+
+### 1. Prohibition of Native Scrollbars
+Never use plain native overflow properties (`overflow-y-auto`, `overflow-x-auto`) directly on prominent layout panes, modals, or workspace bodies. Default browser scrollbars vary wildly between operating systems (e.g., rigid heavy scrollbars on Windows vs subtle default overlays on macOS), breaking aesthetic uniformity.
+
+### 2. Mandatory Use of `<ScrollArea>`
+Always wrap scrollable modal views or side panels in the custom `<ScrollArea>` component (`@/components/ui/scroll-area` built on top of `@base-ui/react/scroll-area`). It implements a beautiful, ultra-thin hardware-accelerated scroll track that is fully visual-consistent across devices and themes.
+
+### 3. Padding Offsets & Guardrails
+When placing content inside `<ScrollArea>`, apply an additional right-padding offset (e.g., `pr-3` or `pr-4`) on the immediate child container. This ensures that form inputs, buttons, and text do not clip directly beneath the floating scrollbar thumb.
+
+### 4. Compact Modal Overflows
+For scrollable content inside interactive modals (such as the Copilot view):
+- Always define a strict maximum height boundary (e.g., `max-h-[60vh]`) to maintain tight, localized spatial focus.
+- Wrap content inside the modal like this:
+  ```tsx
+  import { ScrollArea } from "@/components/ui/scroll-area";
+  
+  // Inside DialogContent
+  <ScrollArea className="flex-1 mt-3.5 min-h-0 max-h-[60vh]">
+    <div className="space-y-3.5 pb-2 pr-3">
+      {/* Content goes here */}
+    </div>
+  </ScrollArea>
+  ```

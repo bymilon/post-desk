@@ -91,8 +91,8 @@ export const CopilotModal = () => {
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-1 mt-3.5 min-h-0 max-h-[60vh]">
-          <div className="space-y-3.5 pb-2">
+        <ScrollArea className="flex-1 mt-3.5 min-h-0 max-h-[60vh]">
+          <div className="space-y-3.5 pb-2 pr-3">
             <div className="flex gap-4">
               <div className="space-y-1.5 flex-1">
                 <Label htmlFor="type" className="text-xs font-semibold text-muted-foreground/90 font-sans">Post Type</Label>
