@@ -1,12 +1,16 @@
 # PostDesk
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-post--desk-181717?logo=github)](https://github.com/bymilon/post-desk)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06b6d4.svg)](https://tailwindcss.com/)
 [![Hono](https://img.shields.io/badge/Hono-v4-e05138.svg)](https://hono.dev/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-v0.45-c5f347.svg)](https://orm.drizzle.team/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6.svg)](https://www.typescriptlang.org/)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow.svg?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/milonspace)
 [![X Follow](https://img.shields.io/badge/Follow-%40milonspace-black.svg?style=flat&logo=x)](https://x.com/milonspace)
+[![Instagram](https://img.shields.io/badge/Instagram-Follow-E4405F?logo=instagram)](https://www.instagram.com/withmilon)
+[![Threads](https://img.shields.io/badge/Threads-Follow-000000?logo=threads)](https://www.threads.com/@withmilon)
 
 PostDesk is a production-grade, full-stack content operating system and growth cockpit for X (Twitter) creators, developer advocates, and teams. Built with a developer-first mindset, it leverages **Vertical Slice Architecture (VSA)** and **CQRS boundaries** to manage, refine, and discover content ideas without friction.
 
@@ -104,10 +108,15 @@ PostDesk is developed and validated within **Google AI Studio**, leveraging its 
 
 ## Support & Sponsorship
 
-If you find PostDesk valuable for organizing your X growth workflow, consider sponsoring the development directly:
+If you find PostDesk valuable for organizing your content workflow, support us and follow our growth journey:
 
-- **Follow / DM on X**: Get in touch at [@milonspace](https://x.com/milonspace) for updates, custom builds, and systems engineering.
-- **Sponsor / Support**: Support open-source tool development by starring this repository and reaching out for sponsorship opportunities in creator infrastructure.
+- **GitHub Repository**: Star and contribute directly at [github.com/bymilon/post-desk](https://github.com/bymilon/post-desk).
+- **Donate / Invest**: Support open-source tool development by buying me a coffee at [buymeacoffee.com/milonspace](https://buymeacoffee.com/milonspace) to keep development energetic.
+- **Social Connects**:
+  - **X (Twitter)**: Follow us at [@milonspace](https://x.com/milonspace) for fast tech updates.
+  - **Instagram**: Stay updated with our product updates at [@withmilon](https://www.instagram.com/withmilon).
+  - **Threads**: Join the daily engineering conversations at [@withmilon on Threads](https://www.threads.com/@withmilon).
+- **Consulting**: Reach out at [@milonspace](https://x.com/milonspace) if your company needs custom automated content scheduling platforms, vertical slice architectures, or high-performance Hono setups.
 
 ---
 
@@ -130,6 +139,9 @@ If you find PostDesk valuable for organizing your X growth workflow, consider sp
    ```bash
    npm run dev
    ```
+
+### Production & Cloudflare Deployment
+PostDesk is fully ready to run on distributed Edge infrastructure. For a step-by-step masterclass on launching the React SPA on Cloudflare Pages and connecting it with a serverless edge database (Turso/LibSQL) on Cloudflare Workers, check out the [Cloudflare Deployment and Configuration Walkthrough](./docs/cloudflare_deployment.md).
 
 ### Command Reference
 
