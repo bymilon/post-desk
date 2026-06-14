@@ -31,7 +31,7 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
 export function useGenerateDrafts() {
   return useMutation({
-    mutationFn: (payload: { intent: string, context: string, postType: string }) => apiFetch('/copilot/generate-drafts', {
+    mutationFn: (payload: { intent: string, context?: string, postType?: string, style?: string, format?: string, length?: string, audience?: string }) => apiFetch('/copilot/generate-drafts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

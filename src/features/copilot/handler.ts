@@ -33,7 +33,7 @@ export const generateDraftsHandler = async (c: Context) => {
     return c.json({ error: validationError.message, details: validationError.details, tag: validationError._tag }, 400);
   }
 
-  const { intent, context, postType } = parseResult.output;
+  const { intent, context, postType, style, format, length, audience } = parseResult.output;
 
   const aiClientResult = getAI();
   if (aiClientResult.isErr()) {
@@ -48,7 +48,11 @@ Your current objective is to write 3 engaging, highly professional, and perfectl
 
 User's Intent/Topic: "${intent}"
 Additional Context: "${context || 'None'}"
-Target Post Type/Style: "${postType}"
+Target Post Type/Style Guidelines: "${postType}"
+Tone/Style: "${style}"
+Format Requirements: "${format}"
+Length Constraint: "${length}"
+Target Audience: "${audience || 'General Tech / Software / Building in Public'}"
 
 === STRUCTURE & FORMATTING RULES ===
 1. VISUAL WHITE SPACE IS KEY: Never output a single block of continuous text.

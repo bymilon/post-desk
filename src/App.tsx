@@ -8,7 +8,8 @@ import {
   Sun, 
   Moon,
   PenLine,
-  Sparkles
+  Sparkles,
+  PenTool
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { AppLogo } from '@/components/AppLogo';
@@ -22,8 +23,9 @@ const PostsWorkspace = lazy(() => import('@/components/PostsWorkspace').then(m =
 const InspirationsBoard = lazy(() => import('@/components/InspirationsBoard').then(m => ({ default: m.InspirationsBoard })));
 const CopilotModal = lazy(() => import('@/components/CopilotModal').then(m => ({ default: m.CopilotModal })));
 const MarketingLanding = lazy(() => import('@/components/MarketingLanding').then(m => ({ default: m.MarketingLanding })));
+const AiWriterWorkspace = lazy(() => import('@/components/AiWriterWorkspace').then(m => ({ default: m.AiWriterWorkspace })));
 
-type ViewContext = 'posts' | 'inspirations' | 'landing';
+type ViewContext = 'posts' | 'inspirations' | 'landing' | 'ai-writer';
 
 export default function App() {
   const [activeView, setActiveView] = useState<ViewContext>('landing');
@@ -89,6 +91,23 @@ export default function App() {
                 </TooltipTrigger>
                 <TooltipContent side="right" className="font-semibold text-xs animate-fade-in">
                   Posts Workspace
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger 
+                  aria-label="AI Writer"
+                  className={`w-9 h-9 rounded-md transition-all flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/45 ${
+                    activeView === 'ai-writer' 
+                      ? 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 hover:bg-indigo-500/15' 
+                      : 'text-muted-foreground/85 hover:text-foreground hover:bg-muted/30'
+                  }`}
+                  onClick={() => setActiveView('ai-writer')}
+                >
+                  <PenTool className="w-4.5 h-4.5" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="font-semibold text-xs animate-fade-in">
+                  AI Writer
                 </TooltipContent>
               </Tooltip>
 
@@ -171,7 +190,7 @@ export default function App() {
               </div>
               <div>
                 <h1 className="text-xs font-bold tracking-tight text-foreground flex items-center gap-1.5 font-sans">
-                  {activeView === 'posts' ? 'Posts Space' : 'Inspirations Board'}
+                  {activeView === 'posts' ? 'Posts Space' : activeView === 'ai-writer' ? 'AI Writer' : 'Inspirations Board'}
                   <span className="text-[9.5px] font-mono text-muted-foreground/75 font-semibold px-1.5 py-0.5 bg-muted/45 border border-border/15 rounded-md">
                     v1.0
                   </span>
@@ -188,6 +207,10 @@ export default function App() {
                   <Suspense fallback={<Skeleton className="h-8 w-[100px] rounded-md" />}>
                     <CreatePostForm />
                   </Suspense>
+                </div>
+              ) : activeView === 'ai-writer' ? (
+                <div className="flex items-center gap-2">
+                  {/* Additional actions for AI writer could go here */}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -208,6 +231,12 @@ export default function App() {
                     searchQuery={searchQuery} 
                     setSearchQuery={setSearchQuery} 
                   />
+                </Suspense>
+              </div>
+            ) : activeView === 'ai-writer' ? (
+              <div className="w-full h-full p-6 animate-fade-in">
+                <Suspense fallback={<Skeleton className="w-full h-full rounded-xl" />}>
+                  <AiWriterWorkspace />
                 </Suspense>
               </div>
             ) : (
